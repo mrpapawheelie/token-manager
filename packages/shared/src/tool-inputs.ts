@@ -8,6 +8,7 @@ import {
   targetMarketSchema,
 } from "./naming.js";
 import { dataLocationSchema } from "./api-builder.js";
+import { membershipSourceSchema } from "./credentials.js";
 import { claimFieldSchema } from "./scanner.js";
 import {
   acknowledgementsSchema,
@@ -544,6 +545,53 @@ export const apiBuilderTokenGateInputSchema = z
 
 export const apiBuilderX402InputSchema = z.object({}).strict();
 
+export const personalOauthInputSchema = z
+  .object({
+    provider: z.enum(["github", "linkedin", "x"]),
+    accountLabel: z.string().min(1).max(80),
+  })
+  .strict();
+
+export const credWalletProofInputSchema = z
+  .object({
+    walletAddress: publicAddressSchema,
+  })
+  .strict();
+
+export const credResolveMembershipInputSchema = z
+  .object({
+    source: membershipSourceSchema,
+    walletAddress: publicAddressSchema,
+  })
+  .strict();
+
+export const credAssessInputSchema = z
+  .object({
+    category: z.string().min(1).max(40),
+    recorded: z
+      .object({
+        new_x_account: z.boolean().optional(),
+        long_x_silence: z.boolean().optional(),
+        sudden_launch_posts: z.boolean().optional(),
+        thin_history: z.boolean().optional(),
+        gitcoin_passport: z.boolean().optional(),
+        base_builder: z.boolean().optional(),
+        build_guild: z.boolean().optional(),
+        eth_aligned_contrib: z.boolean().optional(),
+      })
+      .strict()
+      .default({}),
+  })
+  .strict();
+
+export const credXHeuristicsInputSchema = z
+  .object({
+    subjectLabel: z.string().min(1).max(80),
+    longInactivityThenLaunchSpam: z.boolean(),
+    voiceStyleShift: z.boolean(),
+  })
+  .strict();
+
 export const toolInputSchemas = {
   get_progress: getProgressInputSchema,
   resume: resumeInputSchema,
@@ -601,6 +649,13 @@ export const toolInputSchemas = {
   identity_explain_methods: emptyInputSchema,
   identity_score_from_inputs: identityScoreInputSchema,
   identity_add_claim: identityClaimInputSchema,
+  identity_list_tags: emptyInputSchema,
+  identity_personal_oauth: personalOauthInputSchema,
+  cred_oauth_begin: personalOauthInputSchema,
+  cred_wallet_proof: credWalletProofInputSchema,
+  cred_resolve_membership: credResolveMembershipInputSchema,
+  cred_assess: credAssessInputSchema,
+  cred_x_heuristics: credXHeuristicsInputSchema,
   admin_session_preview: adminPreviewInputSchema,
   admin_list_co_admins: sessionOnlyInputSchema,
   admin_add_co_admin: adminAddInputSchema,

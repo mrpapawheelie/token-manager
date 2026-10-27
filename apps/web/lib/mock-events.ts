@@ -1,13 +1,17 @@
 import {
   IDENTITY_METHODS,
   buildBadges,
+  credentialTags,
   creationEventSchema,
   guardianPolicySchema,
+  reviewXHeuristics,
   scoreIdentity,
   scoreProfile,
+  type AdminFlagQueueItem,
   type BadgeDefinition,
   type CoAdmin,
   type CreationEvent,
+  type CredentialTag,
   type GuardianPolicy,
   type LockTier,
   type ProfileCompletionScore,
@@ -29,6 +33,8 @@ export interface DirectoryProject {
   signals: ProfileSignals;
   lockTier: LockTier;
   badges: BadgeDefinition[];
+  tags: CredentialTag[];
+  privateFlags: AdminFlagQueueItem[];
   completion: ProfileCompletionScore;
   admin: {
     creatorWallet: string;
@@ -51,6 +57,8 @@ function project(input: {
   signals: ProfileSignals;
   lockTier: LockTier;
   locks: CreationEvent["locks"];
+  tags: CredentialTag[];
+  privateFlags: AdminFlagQueueItem[];
   socials: CreationEvent["socials"];
   identity: CreationEvent["identity"];
   coAdmins: CoAdmin[];
@@ -94,6 +102,8 @@ function project(input: {
     signals: input.signals,
     lockTier: input.lockTier,
     badges,
+    tags: input.tags,
+    privateFlags: input.privateFlags,
     completion,
     admin: { creatorWallet, coAdmins: input.coAdmins, guardian },
   };
@@ -154,6 +164,8 @@ export const mockProjects: DirectoryProject[] = [
     signals: northSignals,
     lockTier: "none",
     locks: [],
+    tags: credentialTags({ eth_aligned_contrib: true }),
+    privateFlags: [],
     socials: {
       x: "northcurve",
       telegram: "https://t.me/northcurve",
@@ -207,6 +219,12 @@ export const mockProjects: DirectoryProject[] = [
         quoteSymbol: "SOL",
       },
     ],
+    tags: credentialTags({ new_x_account: true, thin_history: true }),
+    privateFlags: reviewXHeuristics({
+      subjectLabel: "queue-note",
+      longInactivityThenLaunchSpam: true,
+      voiceStyleShift: false,
+    }).items,
     socials: {},
     identity: scoreIdentity({ mode: "anonymous_verified", claimProofs: [] }),
     coAdmins: [],
@@ -246,6 +264,16 @@ export const mockProjects: DirectoryProject[] = [
         proofUri: "https://example.com/forge-lock/team",
       },
     ],
+    tags: credentialTags({
+      gitcoin_passport: true,
+      build_guild: true,
+      eth_aligned_contrib: true,
+    }),
+    privateFlags: reviewXHeuristics({
+      subjectLabel: "forge-lock",
+      longInactivityThenLaunchSpam: false,
+      voiceStyleShift: true,
+    }).items,
     socials: {
       website: "https://example.com/forge-lock",
       x: "forgelock",

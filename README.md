@@ -27,6 +27,8 @@ These are also encoded in `packages/shared/src/principles.ts`.
 9. **OAuth** connects accounts so the platform can third-party verify those accounts together with the contract.
 10. **Developer identity score.** Optional public identity, or anonymous-but-verified. Score X, AI-checkable claim proofs, and an optional external ID API. Publish the verification methods. Rank badges are out of scope.
 
+We **validate actions**. We **do not grade people**. Credential tags (`CredentialTag`) are neutral: grey or empty is a signal, and color means the action was recorded. A shady history withholds benefits. **Buyers decide.** Personal OAuth covers the founder's GitHub, LinkedIn, and X (`cred_oauth_begin`). Building wallets are Sign-In With Solana only (`cred_wallet_proof`). Gitcoin Passport, Build Guild, and Base builders resolve from that signed address through documented APIs (`cred_resolve_membership`); a pasted membership URL is not accepted. `cred_assess` maps recorded history onto tags and does not call a model. X compromise heuristics (`cred_x_heuristics`) open a private `AdminFlagQueueItem` and do not auto-publish a verified claim.
+
 Factual status labels (locked liquidity, auto-compounding, GitHub, X, Telegram, team lock) start grey and turn on when the check is true. A profile completion score (for example **70%** complete) shows what is still missing. Those labels are checks, not trophies.
 
 Write the target market before the name (`name_intake`). Score the word for one syllable, few letters, letters only, and a clear X cashtag (`name_score`). Prefer a `.com` at Cloudflare with WHOIS redaction (`domain_plan`, `domain_connect`). Brand files are a simple mark; `brand_generate` returns the brief and does not draw the image yet.

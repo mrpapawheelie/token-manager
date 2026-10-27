@@ -23,6 +23,8 @@ A successful create becomes a directory row:
 
 `oauth_begin` and `verify_connected_accounts` are stubs. The intended check is third-party: the connected account and the contract belong together. The tools accept a provider name and a public label. They do not accept tokens.
 
+Credential tags are separate from the score. They name recorded actions and stay grey until recorded. They do not grade a person. Compromise heuristics stay on a private admin queue and are not published as verified. See [Credentials](/credentials).
+
 ## Identity score
 
 Two modes are complete modes: **public** and **anonymous-but-verified**. Anonymous does not lose points.

@@ -27,7 +27,9 @@ export default function HomePage() {
           </a>
         </p>
       </div>
-      <Directory projects={mockProjects} />
+      <Directory
+        projects={mockProjects.map((project) => ({ ...project, privateFlags: [] }))}
+      />
     </div>
   );
 }

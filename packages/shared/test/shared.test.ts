@@ -25,7 +25,9 @@ import {
   TOKEN_CREATION_FEE,
   WEEKLY_MILESTONES,
   brandAssetBrief,
+  assessCredentials,
   buildScannerToken,
+  buildWalletProof,
   describeEndpoints,
   locateProjectData,
   compareOriginality,
@@ -34,6 +36,7 @@ import {
   prelaunchChecklist,
   planDomain,
   planFounderGithubRepo,
+  reviewXHeuristics,
   x402EndpointSpec,
   quoteDevBuy,
   quoteTokenPrice,
@@ -418,6 +421,53 @@ describe("prelaunch and api builder", () => {
   });
 });
 
+describe("credentials", () => {
+  it("tags actions and does not grade or auto-verify", () => {
+    const empty = assessCredentials({ category: "tooling" });
+    assert.equal(empty.aiCalled, false);
+    assert.equal(empty.gradesPeople, false);
+    assert.equal(empty.ratings, null);
+    assert.equal(
+      empty.tags.every((tag) => tag.active === false && tag.rating === null),
+      true,
+    );
+    const recorded = assessCredentials({
+      category: "tooling",
+      recorded: { eth_aligned_contrib: true },
+    });
+    assert.equal(
+      recorded.tags.find((tag) => tag.id === "eth_aligned_contrib")?.active,
+      true,
+    );
+    assert.equal(
+      recorded.tags.find((tag) => tag.id === "gitcoin_passport")?.active,
+      false,
+    );
+
+    const proof = buildWalletProof(ADDRESS);
+    assert.equal(proof.method, "siws");
+    assert.equal(proof.verified, false);
+    assert.equal(proof.pastedMembershipUrl, "rejected");
+    const pasted = toolInputSchemas.cred_resolve_membership.safeParse({
+      source: "gitcoin_passport",
+      walletAddress: ADDRESS,
+      membershipUrl: "https://example.com/passport",
+    });
+    assert.equal(pasted.success, false);
+
+    const review = reviewXHeuristics({
+      subjectLabel: "sample",
+      longInactivityThenLaunchSpam: true,
+      voiceStyleShift: false,
+    });
+    assert.equal(review.published, false);
+    assert.equal(review.verified, false);
+    assert.equal(review.items[0]?.visibility, "private");
+    assert.equal(review.items[0]?.verified, false);
+    assert.equal(review.items[0]?.autoPublished, false);
+  });
+});
+
 describe("redaction and readme", () => {
   it("redacts secret keys and long base58 strings", () => {
     const secret = "5".repeat(88);
@@ -464,6 +514,8 @@ describe("redaction and readme", () => {
       "unverified",
       "wire project data",
       "x402",
+      "do not grade people",
+      "Buyers decide",
     ]) {
       assert.equal(readme.includes(phrase), true, phrase);
     }

@@ -20,7 +20,12 @@ import {
   cavemanScript,
   checkTokenDesign,
   codexChecklist,
+  MEMBERSHIP_ADAPTERS,
+  assessCredentials,
+  buildWalletProof,
   creationEventSchema,
+  credentialTags,
+  reviewXHeuristics,
   devApiChecklist,
   environmentChecks,
   graduateChecklist,
@@ -134,6 +139,9 @@ function stub(name: ToolName, input: unknown): ToolPayload {
       ...(guardian ? { guardian } : {}),
       stored: false,
       network: false,
+      ...(name === "cred_resolve_membership"
+        ? { pastedUrl: "rejected" as const, adapters: MEMBERSHIP_ADAPTERS }
+        : {}),
     },
   };
 }
@@ -512,6 +520,29 @@ const implementedHandlers: {
       score: scoreIdentity(args),
       caveat: "Phase 1 trusts the statuses you sent. It does not check evidence.",
     });
+  },
+
+  async identity_list_tags() {
+    return ok("identity_list_tags", {
+      gradesPeople: false,
+      tags: credentialTags(),
+      rule: "Grey means not recorded. Color means the action was recorded. Tags are not ratings. Buyers decide. A shady history withholds benefits.",
+    });
+  },
+
+  async cred_wallet_proof(input) {
+    const args = toolInputSchemas.cred_wallet_proof.parse(input);
+    return ok("cred_wallet_proof", buildWalletProof(args.walletAddress));
+  },
+
+  async cred_assess(input) {
+    const args = toolInputSchemas.cred_assess.parse(input);
+    return ok("cred_assess", assessCredentials(args));
+  },
+
+  async cred_x_heuristics(input) {
+    const args = toolInputSchemas.cred_x_heuristics.parse(input);
+    return ok("cred_x_heuristics", reviewXHeuristics(args));
   },
 
   async identity_add_claim(input) {

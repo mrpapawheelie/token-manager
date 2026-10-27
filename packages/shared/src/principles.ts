@@ -50,6 +50,10 @@
  * X analytics in the admin shell are mock until a real connect exists. X Radar
  * (Premium+ or Business) is a UI guide: cashtag plus a campaign keyword. There
  * is no documented Radar export API.
+ *
+ * Credentials: validate actions, do not grade people. Tags stay grey until
+ * recorded. Compromise heuristics stay on a private admin queue and are not
+ * published as verified. Buyers decide.
  */
 
 export const PRODUCT_NAME = "Token Manager";

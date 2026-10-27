@@ -6,6 +6,7 @@ import { CONTRACT_ADDRESS_PLACEHOLDER } from "@token-manager/shared";
 import { BadgeList } from "@/components/badges";
 import { ContractAddress } from "@/components/contract-address";
 import { IdentityScorePanel } from "@/components/identity-score";
+import { TagList } from "@/components/tag-list";
 import { getProject } from "@/lib/mock-events";
 
 interface PageProps {
@@ -52,6 +53,15 @@ export default async function TokenPage({ params }: PageProps) {
           Admin shell
         </Link>
       </div>
+
+      <section className="space-y-2">
+        <h2 className="text-lg font-semibold">Credential tags</h2>
+        <p className="text-sm text-stone-600">
+          Grey means the action was not recorded. Color means it was. These tags do not
+          grade the person. Buyers decide.
+        </p>
+        <TagList tags={project.tags} />
+      </section>
 
       <section className="space-y-2">
         <h2 className="text-lg font-semibold">Status labels</h2>

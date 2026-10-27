@@ -36,6 +36,30 @@ export function AdminDashboard({ project }: { project: DirectoryProject }) {
 
   return (
     <div className="space-y-8">
+      <section className="space-y-2 rounded-lg border border-stone-400 bg-stone-100 p-4">
+        <h2 className="text-lg font-semibold">Private admin review</h2>
+        <p className="text-sm text-stone-700">
+          Private. This queue is not on the public token page. A heuristic is not a
+          verified claim. We validate actions. We do not grade people.
+        </p>
+        {project.privateFlags.length === 0 ? (
+          <p className="text-sm text-stone-600">No private flags on this mock.</p>
+        ) : (
+          <ul className="space-y-2 text-sm">
+            {project.privateFlags.map((flag) => (
+              <li key={flag.id} className="rounded-md bg-white p-3 ring-1 ring-stone-300">
+                <p className="font-medium">{flag.reason.replaceAll("_", " ")}</p>
+                <p className="text-stone-700">{flag.detail}</p>
+                <p className="text-stone-500">
+                  {flag.queue} · {flag.visibility} · published {String(flag.published)} ·
+                  verified {String(flag.verified)}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       <section className="rounded-lg border border-stone-200 bg-white p-4">
         <h2 className="text-lg font-semibold">Sign-in preview</h2>
         <p className="mt-1 text-sm text-stone-600">

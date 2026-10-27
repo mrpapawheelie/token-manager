@@ -74,6 +74,7 @@ describe("mcp server", () => {
         "scanner_",
         "prelaunch_",
         "api_builder_",
+        "cred_",
       ]) {
         assert.equal(
           names.some((name) => name.startsWith(prefix)),

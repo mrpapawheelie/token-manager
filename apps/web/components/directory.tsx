@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import type { DirectoryProject } from "@/lib/mock-events";
 
 import { BadgeList } from "./badges";
+import { TagList } from "./tag-list";
 
 const VERIFICATION = [
   "all",
@@ -158,6 +159,9 @@ export function Directory({ projects }: { projects: DirectoryProject[] }) {
                   <td className="px-3 py-3">{project.completion.percent}% complete</td>
                   <td className="px-3 py-3">
                     <BadgeList badges={project.badges} />
+                    <div className="mt-2">
+                      <TagList tags={project.tags} />
+                    </div>
                   </td>
                 </tr>
               ))}

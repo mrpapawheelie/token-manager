@@ -42,6 +42,27 @@ export {
 export type { TokenPriceQuery, TokenPriceStub } from "./clients/price.js";
 
 export {
+  CREDENTIAL_TAG_IDS,
+  MEMBERSHIP_ADAPTERS,
+  adminFlagQueueItemSchema,
+  assessCredentials,
+  buildWalletProof,
+  credAssessmentResultSchema,
+  credentialTagSchema,
+  credentialTags,
+  membershipSourceSchema,
+  reviewXHeuristics,
+  walletProofSchema,
+  type AdminFlagQueueItem,
+  type AdminFlagReason,
+  type CredAssessmentResult,
+  type CredentialTag,
+  type CredentialTagId,
+  type MembershipSource,
+  type WalletProof,
+} from "./credentials.js";
+
+export {
   CAVEMAN_TOPICS,
   buildFairLaunchAnnouncement,
   cavemanScript,
