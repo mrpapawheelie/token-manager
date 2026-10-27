@@ -29,6 +29,8 @@ import {
   devApiChecklist,
   environmentChecks,
   graduateChecklist,
+  KYC_TIERS,
+  kycBadges,
   listBadgeCatalog,
   listCavemanTopics,
   lockProofSchema,
@@ -36,6 +38,8 @@ import {
   planTeamLock,
   prepChecklist,
   previewAdminSession,
+  privySessionStub,
+  reviewEmailProof,
   BRAND_PRINCIPLES,
   CLOUDFLARE_DOMAIN_STEPS,
   WEEKLY_MILESTONES,
@@ -55,6 +59,7 @@ import {
   reviewGuardianGate,
   schedulePrep,
   scoreIdentity,
+  tier1AttestationStub,
   scoreProfile,
   socialLinksSchema,
   stagesBefore,
@@ -141,6 +146,13 @@ function stub(name: ToolName, input: unknown): ToolPayload {
       network: false,
       ...(name === "cred_resolve_membership"
         ? { pastedUrl: "rejected" as const, adapters: MEMBERSHIP_ADAPTERS }
+        : {}),
+      ...(name === "kyc_tier2_upload" || name === "kyc_tier3_interview"
+        ? {
+            optional: true as const,
+            vendorAttested: false as const,
+            fileStored: false as const,
+          }
         : {}),
     },
   };
@@ -543,6 +555,35 @@ const implementedHandlers: {
   async cred_x_heuristics(input) {
     const args = toolInputSchemas.cred_x_heuristics.parse(input);
     return ok("cred_x_heuristics", reviewXHeuristics(args));
+  },
+
+  async kyc_list_tiers() {
+    return ok("kyc_list_tiers", { optional: true, tiers: KYC_TIERS });
+  },
+
+  async kyc_tier1_attest(input) {
+    const args = toolInputSchemas.kyc_tier1_attest.parse(input);
+    return ok("kyc_tier1_attest", tier1AttestationStub(args.venue));
+  },
+
+  async kyc_badges(input) {
+    const args = toolInputSchemas.kyc_badges.parse(input);
+    return ok("kyc_badges", {
+      badges: kycBadges({
+        2: args.recordedTier2,
+        3: args.recordedTier3,
+      }),
+      vendorAttested: false,
+    });
+  },
+
+  async kyc_email_proof(input) {
+    const args = toolInputSchemas.kyc_email_proof.parse(input);
+    return ok("kyc_email_proof", reviewEmailProof(args));
+  },
+
+  async kyc_privy_session() {
+    return ok("kyc_privy_session", privySessionStub());
   },
 
   async identity_add_claim(input) {

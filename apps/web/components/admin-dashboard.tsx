@@ -81,6 +81,11 @@ export function AdminDashboard({ project }: { project: DirectoryProject }) {
             ? "Previewing as root. authenticated would still be false until a signature check exists."
             : "Signed out. The panels below stay visible so the shell can be reviewed."}
         </p>
+        <p className="mt-2 text-sm text-stone-600">
+          Privy can cover Google or social login and wallet connect. Start on the free
+          plan. This stub is signed out and sits beside Sign-In With Solana. It is not a
+          second root admin.
+        </p>
       </section>
 
       <section className="grid gap-3 sm:grid-cols-3">

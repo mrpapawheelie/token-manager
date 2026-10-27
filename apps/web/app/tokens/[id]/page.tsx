@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CONTRACT_ADDRESS_PLACEHOLDER } from "@token-manager/shared";
+import { CONTRACT_ADDRESS_PLACEHOLDER, kycBadges } from "@token-manager/shared";
 
 import { BadgeList } from "@/components/badges";
 import { ContractAddress } from "@/components/contract-address";
@@ -61,6 +61,25 @@ export default async function TokenPage({ params }: PageProps) {
           grade the person. Buyers decide.
         </p>
         <TagList tags={project.tags} />
+      </section>
+
+      <section className="space-y-2">
+        <h2 className="text-lg font-semibold">Optional KYC</h2>
+        <p className="text-sm text-stone-600">
+          Tier 0 is none. Tiers 1–3 are optional and stack. Grey means not attested. Phase
+          1 does not call a venue or a vendor.
+        </p>
+        <ul className="flex flex-wrap gap-2">
+          {kycBadges().map((badge) => (
+            <li
+              key={badge.tier}
+              title={badge.detail}
+              className="rounded-full bg-stone-200 px-2.5 py-1 text-xs text-stone-500 ring-1 ring-stone-300"
+            >
+              {badge.label}
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className="space-y-2">

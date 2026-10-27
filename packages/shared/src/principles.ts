@@ -54,6 +54,10 @@
  * Credentials: validate actions, do not grade people. Tags stay grey until
  * recorded. Compromise heuristics stay on a private admin queue and are not
  * published as verified. Buyers decide.
+ *
+ * KYC is optional. Do not invent a venue attestation. A mismatched OAuth email
+ * is not identity proof until the inbox is proved. Privy starts on the free plan
+ * and does not replace SIWS.
  */
 
 export const PRODUCT_NAME = "Token Manager";

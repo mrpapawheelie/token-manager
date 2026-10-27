@@ -592,6 +592,41 @@ export const credXHeuristicsInputSchema = z
   })
   .strict();
 
+const emailField = z.string().email().max(160);
+
+export const kycTier1InputSchema = z
+  .object({
+    venue: z.string().min(1).max(40).default("coinbase"),
+  })
+  .strict();
+
+export const kycTier2InputSchema = z
+  .object({
+    vendorLabel: z.string().min(1).max(40).default("vendor"),
+  })
+  .strict();
+
+export const kycTier3InputSchema = z
+  .object({
+    vendorLabel: z.string().min(1).max(40).default("vendor"),
+  })
+  .strict();
+
+export const kycBadgesInputSchema = z
+  .object({
+    recordedTier2: z.boolean().default(false),
+    recordedTier3: z.boolean().default(false),
+  })
+  .strict();
+
+export const kycEmailProofInputSchema = z
+  .object({
+    registrationEmail: emailField.optional(),
+    oauthEmail: emailField.optional(),
+    oauthProvider: z.string().min(1).max(40).optional(),
+  })
+  .strict();
+
 export const toolInputSchemas = {
   get_progress: getProgressInputSchema,
   resume: resumeInputSchema,
@@ -656,6 +691,13 @@ export const toolInputSchemas = {
   cred_resolve_membership: credResolveMembershipInputSchema,
   cred_assess: credAssessInputSchema,
   cred_x_heuristics: credXHeuristicsInputSchema,
+  kyc_list_tiers: emptyInputSchema,
+  kyc_tier1_attest: kycTier1InputSchema,
+  kyc_tier2_upload: kycTier2InputSchema,
+  kyc_tier3_interview: kycTier3InputSchema,
+  kyc_badges: kycBadgesInputSchema,
+  kyc_email_proof: kycEmailProofInputSchema,
+  kyc_privy_session: emptyInputSchema,
   admin_session_preview: adminPreviewInputSchema,
   admin_list_co_admins: sessionOnlyInputSchema,
   admin_add_co_admin: adminAddInputSchema,

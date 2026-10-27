@@ -35,6 +35,24 @@ export {
 } from "./api-builder.js";
 
 export {
+  KYC_TIERS,
+  emailProofSchema,
+  emailProofStatusSchema,
+  kycBadgeSchema,
+  kycBadges,
+  kycTierSchema,
+  privySessionStub,
+  privySessionStubSchema,
+  reviewEmailProof,
+  tier1AttestationStub,
+  type EmailProof,
+  type EmailProofStatus,
+  type KycBadge,
+  type KycTier,
+  type PrivySessionStub,
+} from "./kyc.js";
+
+export {
   quotePriceFromCodex,
   quotePriceOnchain,
   quoteTokenPrice,

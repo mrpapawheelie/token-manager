@@ -28,6 +28,7 @@ import {
   assessCredentials,
   buildScannerToken,
   buildWalletProof,
+  kycBadges,
   describeEndpoints,
   locateProjectData,
   compareOriginality,
@@ -35,8 +36,11 @@ import {
   placeholderScanNotification,
   prelaunchChecklist,
   planDomain,
+  privySessionStub,
+  reviewEmailProof,
   planFounderGithubRepo,
   reviewXHeuristics,
+  tier1AttestationStub,
   x402EndpointSpec,
   quoteDevBuy,
   quoteTokenPrice,
@@ -468,6 +472,43 @@ describe("credentials", () => {
   });
 });
 
+describe("optional kyc", () => {
+  it("does not attest tier 1 and blocks a mismatched oauth email", () => {
+    const tier1 = tier1AttestationStub("coinbase");
+    assert.equal(tier1.attested, false);
+    assert.equal(tier1.apiCapability, "unverified");
+    const badges = kycBadges({ 1: true, 2: true, 3: true });
+    assert.equal(badges.length, 3);
+    assert.equal(
+      badges.every((badge) => badge.stackable && badge.vendorAttested === false),
+      true,
+    );
+    assert.equal(badges[0]?.active, false);
+    assert.equal(badges[1]?.active, true);
+    assert.equal(badges[2]?.active, true);
+
+    const mismatch = reviewEmailProof({
+      registrationEmail: "Founder@Example.com",
+      oauthEmail: "other@example.com",
+      oauthProvider: "google",
+    });
+    assert.equal(mismatch.status, "mismatch_needs_magic_link");
+    assert.equal(mismatch.oauthIsIdentityProof, false);
+    assert.equal(mismatch.magicLinkSent, false);
+    const matched = reviewEmailProof({
+      registrationEmail: "founder@example.com",
+      oauthEmail: "Founder@Example.com",
+    });
+    assert.equal(matched.status, "matched");
+    assert.equal(matched.oauthIsIdentityProof, true);
+
+    const privy = privySessionStub();
+    assert.equal(privy.authenticated, false);
+    assert.equal(privy.plan, "free");
+    assert.equal(privy.alongside, "siws");
+  });
+});
+
 describe("redaction and readme", () => {
   it("redacts secret keys and long base58 strings", () => {
     const secret = "5".repeat(88);
@@ -516,6 +557,9 @@ describe("redaction and readme", () => {
       "x402",
       "do not grade people",
       "Buyers decide",
+      "does not invent an attestation",
+      "magic link",
+      "Privy",
     ]) {
       assert.equal(readme.includes(phrase), true, phrase);
     }
