@@ -1,0 +1,42 @@
+---
+layout: ../layouts/DocLayout.astro
+title: Meteora
+---
+
+# Meteora DAMM v2
+
+Stage: `meteora_damm_v2`.
+
+After graduation, LP goes to Meteora DAMM v2 and stays locked. The product setting is fixed:
+
+`compounding_fee_bps = 10000`
+
+That is 100% of LP fees auto-compounding into **quote token B** (SOL or USDC). The schema uses a literal `10000`, so a lower fee cannot be saved by accident.
+
+Buybacks and burns pull value back out to perform a price story. This design leaves the fees in the pool. `ops_year_log_week` records a buyback request as discouraged and does not build a plan.
+
+## Price, then the pool
+
+`MeteoraPoolConfig.priceSource` is `codex` or `onchain`.
+
+- `codex` means the Codex.io token data API (almost-free tier, one-time $1 activation).
+- `onchain` means a later read of the pool price. Phase 2 should use viem. Phase 1 does not open an RPC.
+
+`meteora_quote_pool` calls the stub client in `packages/shared/src/clients/price.ts` and returns `priceUi: null` with `status: "not_implemented"`.
+
+## Admin ops (stubs)
+
+All of these require `confirm: true` and `guardianAcknowledged: true`. None of them send a transaction.
+
+| Tool                      | Intent                                              |
+| ------------------------- | --------------------------------------------------- |
+| `meteora_preview_damm_v2` | Implemented preview of the terms.                   |
+| `meteora_quote_pool`      | Pick Codex or chain. Stub number.                   |
+| `meteora_create_pool`     | Create the DAMM v2 pool from `MeteoraPoolConfig`.   |
+| `meteora_add_liquidity`   | Add more quote. Large adds sit behind the guardian. |
+| `meteora_lock_lp`         | Lock the position.                                  |
+| `meteora_reinvest_fees`   | Reinvest under the same 10000 bps compound.         |
+
+The web admin shell shows the same four actions as disabled buttons and a price-source control that does not leave the browser.
+
+`graduate_checklist` is the step before this one. `vest_plan_lock` is the step after, for team tokens that are not the LP.

@@ -1,0 +1,46 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  frontmatter?: { title?: string };
+}
+
+const { title, frontmatter } = Astro.props;
+const pageTitle = frontmatter?.title ?? title ?? "Token Manager";
+const links = [
+  ["/", "Overview"],
+  ["/getting-started", "Getting started"],
+  ["/stages", "Stages and tools"],
+  ["/bonding-launch", "Bonding launch"],
+  ["/dump-honesty", "Dump honesty"],
+  ["/meteora", "Meteora"],
+  ["/social", "Social"],
+  ["/codex", "Codex"],
+  ["/directory-identity", "Directory and identity"],
+  ["/admin", "Admin"],
+  ["/year-one", "Year one"],
+];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{pageTitle} · Token Manager</title>
+  </head>
+  <body>
+    <div class="shell">
+      <nav>
+        {
+          links.map(([href, label]) => (
+            <a href={href}>{label}</a>
+          ))
+        }
+      </nav>
+      <article>
+        <slot />
+      </article>
+    </div>
+  </body>
+</html>

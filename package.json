@@ -1,0 +1,36 @@
+{
+  "name": "token-manager",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.33.4",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm -r --if-present test",
+    "dev:mcp": "pnpm --filter @token-manager/mcp dev",
+    "dev:docs": "pnpm --filter @token-manager/docs dev",
+    "dev:web": "pnpm --filter @token-manager/web dev",
+    "start:mcp": "pnpm --filter @token-manager/mcp start"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0",
+    "eslint": "^9.39.5",
+    "prettier": "^3.6.2",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.46.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp",
+      "@tailwindcss/oxide",
+      "unrs-resolver"
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+---
+layout: ../layouts/DocLayout.astro
+title: Admin
+---
+
+# Project admin
+
+The platform shell has a per-project admin page at `/tokens/[id]/admin`. It is a mock. The MCP tools under `admin_*` are the same design.
+
+## Who is root
+
+**Sign-In With Solana.** The root admin is the wallet that created the token. `admin_session_preview` compares a wallet to that creator address and to the co-admin list. It always returns `authenticated: false` in Phase 1, because the signature is not checked.
+
+`TODO(phase-2)`: verify the SIWS signature before any session is treated as signed in.
+
+## Co-admins
+
+Root can add other wallets. `admin_add_co_admin` and `admin_remove_co_admin` require `confirm: true` and `guardianAcknowledged: true`. They do not change the list. `admin_list_co_admins` reads whatever is already on the local session (it starts empty).
+
+## Guardian: the second layer
+
+A stolen creator wallet should not be enough to:
+
+- add or remove admins
+- run a large liquidity op
+- change X API credentials
+
+`GuardianPolicy` names those actions, a threshold, and factors:
+
+- **wallet** — a second public address
+- **passkey** — a public credential id
+- **TOTP** — `totpEnrolled: true` only
+
+There is no schema field for a TOTP secret, a passkey private key, or an X API secret. `admin_x_credentials_change` takes a short label for the change and nothing else.
+
+`reviewGuardianGate` returns `enforced: false` even when the acknowledgement is present. The acknowledgement proves the caller saw the gate. It does not prove a signature, a WebAuthn assertion, or a code. `admin_guardian_policy` can save the policy locally and says it is not enforced.
+
+`TODO(phase-2)`: verify the factor, and refuse the action when verification fails. Never log the secret.
+
+## Dashboard panels
+
+`admin_dashboard_snapshot` lists the panels the shell renders:
+
+- overview of stage, locks, and profile completion
+- co-admins
+- guardian policy
+- placeholder AI chat (`ai_chat_project` calls no model)
+- X automated posts
+- ads and boosts
+- Meteora liquidity (quote source, create, add, lock, reinvest)
+
+The chat box in the web shell answers in the browser and tells you when a message looks like a secret.
