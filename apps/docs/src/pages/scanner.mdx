@@ -1,0 +1,44 @@
+---
+layout: ../layouts/DocLayout.astro
+title: Scanner API
+---
+
+# Scanner API
+
+Read-only JSON for scanner authors: LARP check, Reagent, Crawl Scan, and later tools. Phase 1 is a sketch. The web app serves the mock directory. It does not query a chain, GitHub, or X.
+
+`GET /api/scanner/tokens` lists the rows. `GET /api/scanner/tokens/{id}` returns one. `GET /api/scanner/openapi` returns the OpenAPI 3.1 sketch. The same document lives in `packages/shared` as `SCANNER_OPENAPI`.
+
+## Verification flags
+
+`VerificationFlags` is a fixed set of keys. A missing step is **false**, **null**, or **`"unverified"`**. The route does not drop the key and does not invent a pass.
+
+| Key | Meaning |
+| --- | --- |
+| `connected_x` | `true` only when the row recorded an X connection. Otherwise `false` or `"unverified"`. |
+| `connected_github` | Same rule for GitHub. A pasted URL is not an OAuth connection by itself when the flag was not set. |
+| `id_verified` | `true` only for a recorded `verified` or `anonymous_verified` status. `pending` stays `"unverified"`. |
+| `lp_locked_tier` | `none`, `partial`, or `full` when the row assessed the lock. Otherwise `"unverified"`. |
+| `auto_compound` | Boolean when recorded. Unknown is `null` or `"unverified"`. |
+| `profile_completion` | 0–100 when the checklist was scored. Otherwise `null`. |
+| `claim_fields` | The claims on the row, status copied. An empty list is empty. Status is not upgraded. |
+
+Every Phase 1 payload has `mock: true` and `live: false`. Treat those rows as examples of the shape. Do not score a live project from them.
+
+`ScannerTokenPayload` also says `founderOwned: true`, `optional: true`, and `blocksDiy: false`.
+
+## Rate limit
+
+`rateLimit.enforced` is **false** on this fixture. A live deployment should cap anonymous reads at about **60 requests per minute per IP** and answer **429** after that. The cap must not fill in missing flags to save a lookup.
+
+## Auto-scan hook
+
+`directory_log_create` returns a `scanNotification` placeholder: not enqueued, not delivered, webhook not called. `scanner_notify` is the same stub and accepts no secret. The hook is optional. The coin does not depend on it.
+
+## Originality
+
+`claims_intake` records a use case and a product goal. `originality_compare` overlaps that text with a list you pass. It does not search the web. An empty list stays `unchecked`, and `unique` stays `null`. `originality_coach` says the quiet part: contract checks are easy, and claim or copycat risk is the hard part for a LARP-style scanner.
+
+## GitHub stays theirs
+
+`github_oauth_begin` is a stub with a founder login and no token. `github_repo_plan` names a create or manage action on that login and refuses `token-manager` as the owner. The repo is theirs if they leave.

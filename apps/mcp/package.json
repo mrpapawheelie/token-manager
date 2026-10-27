@@ -1,0 +1,22 @@
+{
+  "name": "@token-manager/mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "test": "pnpm --filter @token-manager/shared build && node --import tsx --test --test-concurrency=1 test/**/*.test.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "~1.32.2",
+    "@token-manager/shared": "workspace:*",
+    "zod": "~3.25.76"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.6",
+    "typescript": "~5.9.3"
+  }
+}

@@ -1,0 +1,33 @@
+---
+layout: ../layouts/DocLayout.astro
+title: Overview
+---
+
+# Token Manager
+
+This is a year-one operating guide for a Pump.fun-style bonding-curve launch on Solana. The coin is created on the curve. It is not a classic flow that mints the whole supply into one wallet first.
+
+Phase 1 of this repo is the shared language: stage ids, schemas, MCP tool names, and a mock directory. Transactions, OAuth, and Codex calls come later. They are named now so the stubs do not drift.
+
+**Platform rule #1, non-negotiable: founder ownership.** Every step is optional. Guidance never blocks a do-it-yourself launch. Wallets, GitHub repos, domains, and X accounts stay under the founder's own accounts. If they leave Token Manager tomorrow, the project keeps working. This repo is not the source of truth for those accounts.
+
+## Principles
+
+1. **About 5% of supply** is the dev buy. That size is the rule of thumb for liquidity after graduation.
+2. **Name the launch time.** Say that snipers and bundlers are common, and that a dump after graduation is typical. The tools do not ship those bots. See [Dump honesty](/dump-honesty).
+3. **Lock the graduated LP on Meteora DAMM v2** with `compounding_fee_bps = 10000`. Fees auto-compound into quote token B. Buybacks and burns are a poor fit. See [Meteora](/meteora).
+4. **Lock extra team tokens**, about an additional 5–10% or more, with a cliff and a stream. Publish the proof.
+5. **Eyes equal buys.** X Premium, AMAs, fee-funded boosts, and the X Developer API. See [Social](/social).
+6. **Caveman explainers.** Short words. Tool: `caveman_explain`.
+7. **Codex.io** for token data. Almost-free tier, one-time $1 activation. See [Codex](/codex).
+8. **Directory row** for every successful create: category, short description, socials, contract, locks, verification.
+9. **OAuth** so the platform can check connected accounts against the contract.
+10. **Identity score** for a public name or an anonymous-but-verified operator. Publish the method. Skip rank badges. See [Directory and identity](/directory-identity).
+
+Status labels on the site start grey and turn on when a check is true. A profile can read **70% complete** when seven of the ten checks are done.
+
+Name the audience before the ticker. Prefer one syllable, few letters, letters only, and a free X cashtag. The domain is a Cloudflare .com with WHOIS redaction. See [Naming and brand](/naming). Creating the curve has no platform fee. Weekly milestones can become labels; perks are still TBD.
+
+The creator wallet is the root admin via Sign-In With Solana. Sensitive changes need a guardian wallet, passkey, or TOTP. Phase 1 only documents and stubs that gate. See [Admin](/admin).
+
+Next: [Getting started](/getting-started) or the [stage map](/stages).

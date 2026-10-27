@@ -1,0 +1,59 @@
+---
+import DocLayout from "../layouts/DocLayout.astro";
+import {
+  ALWAYS_TOOLS,
+  JOURNEY_STAGES,
+  STAGE_LABELS,
+  STAGE_SUMMARIES,
+  TOOL_CATALOG,
+  toolsForStage,
+} from "@token-manager/shared";
+
+const sessionTools = TOOL_CATALOG.filter((tool) => tool.stage === "session");
+---
+
+<DocLayout title="Stages and tools">
+  <h1>Stages and tools</h1>
+  <p>
+    This list is generated from <code>packages/shared</code>. Implemented tools run locally.
+    Others validate input and return <code>not_implemented</code>.
+  </p>
+  <h2>Always available</h2>
+  <ul>
+    {ALWAYS_TOOLS.map((name) => <li><code>{name}</code></li>)}
+  </ul>
+  <h2>Session</h2>
+  <ul>
+    {
+      sessionTools.map((tool) => (
+        <li>
+          <code>{tool.name}</code> — {tool.implemented ? "implemented" : "stub"}. {tool.description}
+        </li>
+      ))
+    }
+  </ul>
+  {
+    JOURNEY_STAGES.map((stage, index) => (
+      <section>
+        <h2>
+          {index}. {STAGE_LABELS[stage]}
+        </h2>
+        <p>
+          <code>{stage}</code>. {STAGE_SUMMARIES[stage]}
+        </p>
+        <ul>
+          {toolsForStage(stage).map((name) => {
+            const tool = TOOL_CATALOG.find((entry) => entry.name === name);
+            return (
+              <li>
+                <code>{name}</code> — {tool?.implemented ? "implemented" : "stub"}
+                {tool?.spendy ? ", confirm required" : ""}
+                {tool?.guardian ? ", guardian acknowledgement required" : ""}
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    ))
+  }
+</DocLayout>

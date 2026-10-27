@@ -1,0 +1,22 @@
+{
+  "name": "Sample Curve Coin",
+  "symbol": "SCC",
+  "description": "Example listing for a bonding-curve launch. Replace every field. This file does not create a coin.",
+  "image": "https://example.com/icon.png",
+  "external_url": "https://example.com",
+  "launchStyle": "bonding_curve",
+  "category": "tooling",
+  "launchAt": "2026-12-01T16:00:00.000Z",
+  "supplyUi": 1000000000,
+  "decimals": 6,
+  "devBuySupplyBps": 500,
+  "dumpHonestyAcknowledged": true,
+  "snipersCommonAcknowledged": true,
+  "socials": {
+    "website": "https://example.com",
+    "x": "samplecurve",
+    "xCommunity": "https://x.com/i/communities/example",
+    "telegram": "https://t.me/samplecurve",
+    "github": "https://github.com/example/sample-curve"
+  }
+}

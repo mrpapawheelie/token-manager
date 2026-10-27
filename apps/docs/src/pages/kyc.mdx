@@ -1,0 +1,31 @@
+---
+layout: ../layouts/DocLayout.astro
+title: Optional KYC
+---
+
+# Optional KYC
+
+KYC is optional. Tier 0 is none, and a launch does not wait on a higher tier. Tools: `kyc_list_tiers`, `kyc_tier1_attest`, `kyc_tier2_upload`, `kyc_tier3_interview`, `kyc_badges`, `kyc_email_proof`, `kyc_privy_session`.
+
+## Tiers
+
+| Tier | What it is | Phase 1 |
+| --- | --- | --- |
+| 0 | None | Default. |
+| 1 | Light, free-ish. OAuth to an already-KYC'd venue such as Coinbase, **if** that product's API can attest the account. | Stub. `attested` is false. `apiCapability` is `unverified`. This repo does not invent an attestation. |
+| 2 | Paid. KYC vendor ID upload. | Stub. No document field. Nothing is stored. |
+| 3 | Higher paid. ID plus a short video interview. | Stub. No video is accepted. |
+
+`KycBadge` rows for tiers 1–3 are **stackable**. Tier 1 stays grey. `vendorAttested` is false on every badge. A local mark on tier 2 or 3 only means someone noted it. It is not a vendor pass.
+
+## Email proof
+
+`EmailProofStatus` is `unproven`, `matched`, or `mismatch_needs_magic_link`.
+
+Compare the registration email with each OAuth email. When they differ, that OAuth is **not** identity proof until a magic link proves the inbox. `kyc_email_proof` does not send the link (`magicLinkSent` is false). When the emails match, the email check can count. A missing address stays `unproven`.
+
+## Privy
+
+Use **Privy** for Google or other social login and for wallet connect. Start on the **free plan**. Do not require a paid Privy tier for Phase 1.
+
+`PrivySessionStub` keeps `authenticated: false`. It sits **beside** Sign-In With Solana for the creator admin. The root admin is still the wallet that created the token. There is no Privy secret field.

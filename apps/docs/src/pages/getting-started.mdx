@@ -1,0 +1,44 @@
+---
+layout: ../layouts/DocLayout.astro
+title: Getting started
+---
+
+# Getting started
+
+From the repo root:
+
+```bash
+pnpm install
+pnpm build
+pnpm dev:docs
+pnpm dev:web
+```
+
+The MCP server speaks stdio. Build it, then point Cursor at the repo:
+
+```json
+{
+  "mcpServers": {
+    "token-manager": {
+      "command": "node",
+      "args": ["apps/mcp/dist/index.js"],
+      "cwd": "/absolute/path/to/token-manager"
+    }
+  }
+}
+```
+
+## First tools
+
+1. `get_progress` — local session, stage 0, `prep_weeks_out`.
+2. `caveman_explain` with topic `bonding_curve` — plain words for the launch shape.
+3. `setup_codex` — record whether the one-time $1 Codex activation is done. There is no API key field.
+4. `prep_x_schedule` — a few dated tasks that end at the launch time you name.
+
+`resume` moves the session. `markCurrentComplete: true` advances one stage. You can also pass a `stage` id. If you jump ahead, the result says `jumped: true`.
+
+## What you should not paste
+
+Seeds, private keys, OAuth tokens, TOTP secrets, and API keys. The schemas refuse unknown secret fields. Public wallet addresses are allowed. Spendy tools still need `confirm: true`, and Phase 1 will not send the transaction.
+
+Session JSON lives in `.token-manager/` under the process working directory unless `TOKEN_MANAGER_SESSION_PATH` is set. That folder is gitignored.

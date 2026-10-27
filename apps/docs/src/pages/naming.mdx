@@ -1,0 +1,50 @@
+---
+layout: ../layouts/DocLayout.astro
+title: Naming and brand
+---
+
+# Naming and brand
+
+Do this before the ticker exists. Stage tools: `name_intake`, then `name_score`, `domain_plan`, `domain_connect`, `brand_principles`, and `brand_generate`.
+
+## Target market first
+
+`name_intake` records the audience, the problem, the category, and the tone. A name that skips this step is a guess.
+
+## Name rules
+
+`name_score` applies the same rules every time. It does not search X. You pass `cashtagTaken` when you already know the collision.
+
+- Prefer **one syllable**. The tool estimates syllables from vowel groups and says when it is more than one.
+- Prefer **few letters**. Past five letters the score drops.
+- **Letters only.** No numbers, hyphens, or other marks in the name or the ticker.
+- Easy to spell on a first read. Three of the same letter in a row is penalized.
+- The X cashtag `$TICKER` must not collide with an existing one. A taken cashtag fails the “preferred” check.
+
+A preferred name is one syllable, at most five letters, letters only, and a clear cashtag.
+
+## Domain
+
+Prefer a **.com**, registered at **Cloudflare**, with WHOIS redaction (private registration is included there). `domain_plan` builds `name.com` only when the label is letters only. It does not check if the name is free and it does not buy it.
+
+`domain_connect` is the dashboard flow:
+
+1. Finish `name_intake` and `name_score`.
+2. Create a Cloudflare account. Do not paste the password or an API token into MCP.
+3. Open Registrar and register the .com.
+4. Leave contact privacy on.
+5. Point DNS at the project site after the name is final.
+
+## Brand kit
+
+`brand_principles`: one simple mark, high contrast, readable at favicon size, the same mark for every crop. Words sit beside the icon, not inside a 32px square.
+
+`brand_generate` returns a brief and a pixel size for `logo` (1024), `avatar` (400), `x_header` (1500×500), `og` (1200×630), or `favicon` (32). **Generation is TODO.** Phase 1 does not draw the file.
+
+## Free creation, milestones, perks
+
+Creating the bonding-curve coin has **no platform fee**. `launch_curve_submit` still requires `confirm: true` because it would be a mainnet action, and Phase 1 does not send it.
+
+`badge_milestones` lists weekly checks (market named, name chosen, launch public, curve live, dump caveat, Meteora lock, team proof, directory row). Each one can become a status label. **Perks are TBD.** The tool does not invent them.
+
+X analytics and Radar live on the [admin](/admin) page and in `admin_x_analytics` / `admin_x_radar_guide`.

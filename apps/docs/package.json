@@ -1,0 +1,15 @@
+{
+  "name": "@token-manager/docs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "~8.1.1",
+    "@token-manager/shared": "workspace:*",
+    "astro": "~7.4.2"
+  }
+}

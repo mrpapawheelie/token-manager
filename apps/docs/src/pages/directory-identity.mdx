@@ -1,0 +1,49 @@
+---
+layout: ../layouts/DocLayout.astro
+title: Directory and identity
+---
+
+# Directory and identity
+
+Stage: `log_creation_event` and `oauth_verify`.
+
+## What gets logged
+
+A successful create becomes a directory row:
+
+- category and a short description
+- social links
+- the public contract address
+- lock proofs
+- verification status and the methods used
+
+`directory_build_event` checks that object. `directory_log_create` stores it on the **local** session and says so. It also returns an optional scan-notification placeholder that does not call a webhook. The hosted directory is the web shell, and Phase 1 fills it with mock rows. Scanner authors read those rows at `GET /api/scanner/tokens`. See [Scanner API](/scanner). Missing checks stay unverified, false, or null.
+
+## OAuth
+
+`oauth_begin` and `verify_connected_accounts` are stubs. The intended check is third-party: the connected account and the contract belong together. The tools accept a provider name and a public label. They do not accept tokens.
+
+Credential tags are separate from the score. They name recorded actions and stay grey until recorded. They do not grade a person. Compromise heuristics stay on a private admin queue and are not published as verified. See [Credentials](/credentials).
+
+## Identity score
+
+Two modes are complete modes: **public** and **anonymous-but-verified**. Anonymous does not lose points.
+
+`identity_explain_methods` publishes the formula:
+
+- X handle: 15, plus 10 if Premium, cap 25
+- Claim proofs: 10 if supported, 4 if submitted or unchecked, cap 40
+- External ID provider name: 20 or 0
+- Method list present: 15
+
+Maximum 100. `identity_score_from_inputs` trusts the statuses you send. `identity_add_claim` stores a proof as `unchecked` and does not run an AI check. Evidence is a public URL.
+
+## Labels and profile completion
+
+These are separate from the identity number.
+
+Labels — locked liquidity (none / partial / full), auto-compounding, GitHub, X, Telegram, team lock — **start grey**. They take color when the check is true. Partial liquidity is amber and says “partial”. There is no gold or silver rank.
+
+`score_profile` counts ten checklist items. Seven true checks are **70% complete**. `score_benefits` is the sentence you show next to that percent: a finished profile tells a buyer the launch time, the dump risk, the lock, and which accounts are actually connected.
+
+The mock directory includes a 70% row, a 40% row, and a 100% row so both grey and color states are visible.

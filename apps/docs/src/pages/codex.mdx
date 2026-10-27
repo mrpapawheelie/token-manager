@@ -1,0 +1,18 @@
+---
+layout: ../layouts/DocLayout.astro
+title: Codex
+---
+
+# Codex.io
+
+Stage: `environment`, then again whenever a pool needs a price.
+
+Codex.io is the token data API for this project.
+
+- Tier to plan for: **almost-free**.
+- Activation: a **one-time $1** charge before data calls work.
+- The API key stays in a secret store. `setup_codex` records only whether activation is marked paid and which tier you named. Phase 1 does not call Codex and cannot see a key.
+
+When you are ready to price a Meteora pool, call `meteora_quote_pool` with `priceSource: "codex"`. The stub client returns no number. The same tool accepts `priceSource: "onchain"` for a later viem read.
+
+Do not put the key in `.env` inside git, in an MCP argument, or in the admin chat box. `.gitignore` already ignores `.env`.

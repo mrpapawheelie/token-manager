@@ -1,0 +1,31 @@
+---
+layout: ../layouts/DocLayout.astro
+title: Bonding launch
+---
+
+# Bonding-curve launch and the 5% buy
+
+Stage: `bonding_curve_launch`.
+
+The coin starts on a bonding curve. Buys and sells move the price. You do not mint the full supply into a creator wallet and then “add liquidity” as the first step. Listing fields use `launchStyle: "bonding_curve"`. The schema rejects other styles.
+
+## The dev buy
+
+About **5% of supply** (500 bps) is the year-one rule of thumb. Those tokens are for the pool after graduation, not for a hidden snipe.
+
+`launch_curve_quote_dev_buy` does the math in whole tokens. One billion supply at 500 bps is 50 million tokens. The tool warns when the bps sits outside roughly 4–6%. It still returns the number you asked for.
+
+`launch_curve_validate_design` requires:
+
+- a name, symbol, category, and description
+- `launchAt` as a real timestamp
+- `dumpHonestyAcknowledged: true`
+- `snipersCommonAcknowledged: true`
+
+`launch_curve_build_announcement` fills the fair-launch post in `templates/fair-launch-announcement.md`: the time, the dev-buy purpose, the sniper warning, and the dump warning.
+
+## Submit
+
+`launch_curve_submit` requires `confirm: true` and a cluster. Phase 1 returns `not_implemented`. It does not build or sign a transaction, and it has no bundler path.
+
+Design the listing first with `launch_curve_validate_design` during `design_listing_meta`, and keep the public copy honest. See [Dump honesty](/dump-honesty).

@@ -1,0 +1,43 @@
+---
+layout: ../layouts/DocLayout.astro
+title: API builder
+---
+
+# API builder
+
+Token Manager helps the founder **market** the coin and **wire project data** to people and to other agents. These tools write specs. They do not call a model, read a balance, or take a payment.
+
+| Tool | What it does |
+| --- | --- |
+| `api_builder_locate` | Where is the data? `none` and `unknown` stay empty. |
+| `api_builder_describe` | The founder describes endpoints in their own words. `aiCalled` is false. An empty note creates no routes. |
+| `api_builder_readonly` | A read-only balance and address check. `balance` is null. |
+| `api_builder_token_gate` | Optional holder gate. Off unless `enabled` is true. No balance is checked. |
+| `api_builder_x402` | A payable read for other agents. |
+
+`ApiEndpointSpec.auth` is `none`, `token`, or `x402`. Every spec in Phase 1 has `live: false`.
+
+## x402
+
+x402 is an **HTTP 402 Payment Required** flow for agent consumers:
+
+1. The agent calls the endpoint with no payment.
+2. The server answers **402** and names the price.
+3. The agent pays the **founder**, not Token Manager, and retries with proof of payment.
+4. The server returns the read-only body.
+
+`X402Config` records that flow and sets `implemented: false` and `platformReceivesFunds: false`. Phase 1 does not charge anyone.
+
+## Mock OpenAPI
+
+`api_builder_x402` returns `API_BUILDER_OPENAPI`. The sample payable path is `GET /v1/project/summary` with a **402** response and a **200** that this repo does not serve. `GET /v1/balance` is the read-only check, also unserved.
+
+```yaml
+/v1/project/summary:
+  get:
+    responses:
+      "402":
+        description: Payment Required. Mock only.
+      "200":
+        description: Not served in Phase 1.
+```

@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.next/
+.astro/
+.turbo/
+coverage/
+*.log
+.DS_Store
+.env
+.env.*
+!.env.example
+.token-manager/
+*.tsbuildinfo
