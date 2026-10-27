@@ -5,6 +5,7 @@ import { CAVEMAN_TOPICS } from "./copy.js";
 import {
   brandAssetKindSchema,
   nameScoreInputSchema,
+  nameShortlistInputSchema,
   targetMarketSchema,
 } from "./naming.js";
 import { dataLocationSchema } from "./api-builder.js";
@@ -396,6 +397,10 @@ export const brandGenerateInputSchema = z
     name: z.string().min(1).max(32),
     kind: brandAssetKindSchema,
     background: z.enum(["light", "dark"]).default("light"),
+    variant: z.number().int().min(0).max(11).default(0),
+    subtitle: z.string().min(1).max(48).optional(),
+    /** When true, write the full kit. `kind` is still required and is the focus asset. */
+    kit: z.boolean().default(false),
   })
   .strict();
 
@@ -647,6 +652,7 @@ export const toolInputSchemas = {
   score_profile: profileSignalsSchema,
   score_benefits: emptyInputSchema,
   name_score: nameScoreInputSchema,
+  name_shortlist: nameShortlistInputSchema,
   domain_plan: domainPlanInputSchema,
   domain_connect: domainConnectInputSchema,
   brand_principles: emptyInputSchema,

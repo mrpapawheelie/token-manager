@@ -1,0 +1,9 @@
+{
+  "success": true,
+  "errors": [],
+  "result": {
+    "domain": "example.com",
+    "registrar": "Example Registrar",
+    "created_date": "1995-08-14T04:00:00Z"
+  }
+}

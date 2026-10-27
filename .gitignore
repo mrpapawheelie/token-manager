@@ -10,4 +10,5 @@ coverage/
 .env.*
 !.env.example
 .token-manager/
+artifacts/
 *.tsbuildinfo

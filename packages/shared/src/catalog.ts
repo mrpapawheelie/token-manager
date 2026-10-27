@@ -87,8 +87,8 @@ export const TOOL_CATALOG = [
     guardian: false,
     writesSession: false,
     description:
-      "Record who the coin is for before anyone picks a name. Audience, problem, category, and tone.",
-    next: "Score candidate words with name_score. Do not buy a domain first.",
+      "Record who the coin is for before anyone picks a name. Audience, problem, category, and tone. Pass the object into name_score or name_shortlist.",
+    next: "Pass this market into name_score or name_shortlist. Do not buy a domain first.",
   },
   {
     name: "social_telegram_plan",
@@ -239,8 +239,20 @@ export const TOOL_CATALOG = [
     guardian: false,
     writesSession: false,
     description:
-      "Score a name and ticker: one syllable preferred, few letters, letters only, and a cashtag that does not collide. Phase 1 does not search X.",
-    next: "If the score is preferred, plan the .com with domain_plan.",
+      "Score a name and ticker against the hard rules. A name is preferred only after the target market is passed in. Collision checks are a local heuristic and do not search X.",
+    next: "Rank several words with name_shortlist, or plan the .com with domain_plan when one name is preferred.",
+  },
+  {
+    name: "name_shortlist",
+    title: "Rank name candidates",
+    stage: "design_listing_meta",
+    implemented: true,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "Rank up to 12 names against the same hard rules. Requires the target market. Collision checks stay local and do not search X.",
+    next: "Plan the .com for the best letters-only word with domain_plan.",
   },
   {
     name: "domain_plan",
@@ -251,7 +263,7 @@ export const TOOL_CATALOG = [
     guardian: false,
     writesSession: false,
     description:
-      "Build a .com plan for Cloudflare with WHOIS redaction. Does not check availability or register anything.",
+      "Build a .com plan for Cloudflare with WHOIS redaction. An availability hint runs only when Cloudflare env vars are set. Does not register or buy the domain.",
     next: "Read the connect steps from domain_connect. Keep Cloudflare tokens out of the tool.",
   },
   {
@@ -275,19 +287,19 @@ export const TOOL_CATALOG = [
     guardian: false,
     writesSession: false,
     description: "Rules for a simple mark that still works as a favicon.",
-    next: "Request a brief with brand_generate. Generation itself is TODO.",
+    next: "Draw the kit with brand_generate. The files are SVGs the founder downloads and owns.",
   },
   {
     name: "brand_generate",
-    title: "Brand asset brief",
+    title: "Generate brand SVGs",
     stage: "design_listing_meta",
     implemented: true,
     spendy: false,
     guardian: false,
     writesSession: false,
     description:
-      "Returns the size and the brief for a logo, avatar, X header, OG image, or favicon. TODO: no image is generated in Phase 1.",
-    next: "A later phase can draw the asset from this brief. Do not upload secrets with it.",
+      "Draw a geometric mark as SVG: logo, app icon, X avatar, X header (1500×500), OG (1200×630), and favicon (32×32). Writes files under artifacts/brand. No image-API key.",
+    next: "Download the SVGs from the paths in the result. Change variant to iterate. The files are yours.",
   },
   {
     name: "badge_milestones",

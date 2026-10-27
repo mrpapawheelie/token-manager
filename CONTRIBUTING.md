@@ -1,6 +1,6 @@
 # Contributing
 
-Phase 1 is schemas, pure helpers, and labeled stubs. Keep that boundary.
+Phase 1 is schemas, pure helpers, and labeled stubs. Phase 2 adds name scoring, a Cloudflare connect guide, and local SVG brand files. Chain writes, OAuth, and purchases stay stubs.
 
 ## Setup
 

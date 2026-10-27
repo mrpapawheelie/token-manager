@@ -36,7 +36,11 @@ export default async function AdminPage({ params }: PageProps) {
         <p className="max-w-2xl text-sm text-stone-700">
           Overview of the mock project, plus placeholder panels for chat, X posts, ads,
           and Meteora. Sensitive controls stay disabled until a real guardian check
-          exists.
+          exists. Name, domain, and brand files are on the{" "}
+          <Link href="/brand" className="underline">
+            brand studio
+          </Link>
+          . They do not change this mock admin.
         </p>
       </div>
       <AdminDashboard project={project} />
