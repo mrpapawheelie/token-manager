@@ -139,11 +139,15 @@ export function AdminDashboard({ project }: { project: DirectoryProject }) {
         </ul>
       </section>
 
+      <XAnalytics
+        handle={project.event.socials.x ?? project.event.symbol}
+        symbol={project.event.symbol}
+      />
+
       <section className="space-y-2">
         <h2 className="text-lg font-semibold">Ads and boosts</h2>
         <p className="text-sm text-stone-600">
-          Fee-funded boosts are for attention. This shell does not spend. A later submit
-          path still requires confirm.
+          {`Fee-funded boosts are for attention around $${project.event.symbol.toUpperCase()} and a campaign keyword. This shell does not spend. A later submit path still requires confirm. Boosts are not a Radar export and not a buyback.`}
         </p>
       </section>
 
@@ -196,6 +200,69 @@ export function AdminDashboard({ project }: { project: DirectoryProject }) {
         </p>
       </section>
     </div>
+  );
+}
+
+function XAnalytics({ handle, symbol }: { handle: string; symbol: string }) {
+  const clean = handle.replace(/^@/, "");
+  const seed = clean.length + 3;
+  const weeks = [
+    { label: "W1", impressions: 2000 + seed * 10 },
+    { label: "W2", impressions: 3500 + seed * 15 },
+    { label: "W3", impressions: 2800 + seed * 12 },
+    { label: "W4", impressions: 4100 + seed * 18 },
+  ];
+  const max = Math.max(...weeks.map((week) => week.impressions));
+  const followers = 800 + seed * 37;
+  const impressions = 12000 + seed * 500;
+  const engagements = 400 + seed * 20;
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-lg font-semibold">X analytics</h2>
+      <p className="rounded-md bg-amber-100 px-3 py-2 text-sm text-amber-950">
+        Mock data. Not pulled from the X API. Connect is not live.
+      </p>
+      <button
+        type="button"
+        disabled
+        className="cursor-not-allowed rounded-md bg-stone-200 px-3 py-2 text-sm text-stone-500"
+      >
+        Connect X account
+      </button>
+      <dl className="grid gap-2 sm:grid-cols-3">
+        <Stat label="Followers" value={String(followers)} />
+        <Stat label="Impressions" value={String(impressions)} />
+        <Stat label="Engagements" value={String(engagements)} />
+      </dl>
+      <div className="space-y-2" aria-label="Mock impressions by week">
+        {weeks.map((week) => (
+          <div
+            key={week.label}
+            className="grid grid-cols-[2.5rem_1fr_4rem] items-center gap-2 text-xs"
+          >
+            <span>{week.label}</span>
+            <div className="h-3 rounded bg-stone-200">
+              <div
+                className="h-3 rounded bg-sky-700"
+                style={{ width: `${Math.round((week.impressions / max) * 100)}%` }}
+              />
+            </div>
+            <span className="text-right">{week.impressions}</span>
+          </div>
+        ))}
+      </div>
+      <div className="space-y-1 text-sm text-stone-700">
+        <h3 className="font-medium text-stone-900">X Radar</h3>
+        <p>
+          {`Radar needs Premium+ or Business. Watch cashtag $${symbol.toUpperCase()} plus a campaign keyword such as the launch week.`}
+        </p>
+        <p>
+          There is no documented Radar export API. Use the Radar screen in X. This page
+          does not call one.
+        </p>
+      </div>
+    </section>
   );
 }
 

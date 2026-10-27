@@ -21,6 +21,12 @@ These are also encoded in `packages/shared/src/principles.ts`.
 
 Factual status labels (locked liquidity, auto-compounding, GitHub, X, Telegram, team lock) start grey and turn on when the check is true. A profile completion score (for example **70%** complete) shows what is still missing. Those labels are checks, not trophies.
 
+Write the target market before the name (`name_intake`). Score the word for one syllable, few letters, letters only, and a clear X cashtag (`name_score`). Prefer a `.com` at Cloudflare with WHOIS redaction (`domain_plan`, `domain_connect`). Brand files are a simple mark; `brand_generate` returns the brief and does not draw the image yet.
+
+Bonding-curve **creation is free** (no platform fee). `launch_curve_submit` still requires `confirm: true` and does not send a transaction in Phase 1. Weekly milestones can become labels (`badge_milestones`). Perks for those milestones are TBD.
+
+The admin shell shows X followers, impressions, and engagements as **mock** charts. `admin_x_connect` does not start OAuth. X Radar (Premium+ or Business) is a UI guide for a cashtag plus a campaign keyword. There is no documented Radar export API, and this repo does not fake one. Fee-funded boosts stay on `ads_*` as attention, not as a Radar download.
+
 ## Per-project admin
 
 Each project site has an admin shell (see `/tokens/[id]/admin` on the web app).

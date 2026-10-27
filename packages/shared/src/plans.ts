@@ -235,7 +235,8 @@ export function adsPreview(input: {
   return [
     `Objective: ${input.objective}.`,
     `Budget note: ${input.budgetNote}`,
-    "Fee-funded boosts buy attention. They are not a buyback and they are not price support.",
+    "Fee-funded boosts buy attention around a cashtag and a campaign keyword. They are not a buyback and they are not price support.",
+    "X Radar is a UI for Premium+ or Business. There is no documented export API, so this boost plan does not pretend to call one.",
     "Phase 1 does not spend. ads_submit requires confirm: true and still does nothing.",
   ];
 }

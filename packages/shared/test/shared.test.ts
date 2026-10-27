@@ -16,12 +16,19 @@ import {
   createProgressState,
   lockProofSchema,
   meteoraPoolConfigSchema,
+  TOKEN_CREATION_FEE,
+  WEEKLY_MILESTONES,
+  brandAssetBrief,
+  mockXAnalytics,
+  planDomain,
   quoteDevBuy,
   quoteTokenPrice,
+  radarGuide,
   redactSecrets,
   reviewGuardianGate,
   scoreIdentity,
   scoreProfile,
+  scoreTokenName,
   tokenDesignSchema,
   toolInputSchemas,
 } from "../src/index.ts";
@@ -244,6 +251,57 @@ describe("profile, identity, guardian, price", () => {
   });
 });
 
+describe("naming, domain, and attention", () => {
+  it("prefers a short letters-only name with a clear cashtag", () => {
+    const preferred = scoreTokenName({ name: "Mox", ticker: "MOX", cashtagTaken: false });
+    assert.equal(preferred.preferred, true);
+    assert.equal(preferred.syllableEstimate, 1);
+    assert.equal(preferred.cashtag, "$MOX");
+    assert.equal(preferred.score, 100);
+
+    const long = scoreTokenName({
+      name: "Moonshot",
+      ticker: "MOON",
+      cashtagTaken: false,
+    });
+    assert.equal(long.syllableEstimate, 2);
+    assert.equal(long.preferred, false);
+    assert.ok(long.score < preferred.score);
+
+    const marked = scoreTokenName({ name: "Mox1", ticker: "MOX1", cashtagTaken: true });
+    assert.equal(marked.lettersOnly, false);
+    assert.equal(marked.cashtagClear, false);
+    assert.equal(marked.preferred, false);
+  });
+
+  it("plans a Cloudflare .com and does not invent a Radar API", () => {
+    const domain = planDomain("Mox");
+    assert.equal(domain.hostname, "mox.com");
+    assert.equal(domain.registrar, "cloudflare");
+    assert.equal(domain.privacy, "whois_redaction");
+    assert.equal(planDomain("mox-1").hostname, null);
+
+    const radar = radarGuide({
+      ticker: "mox",
+      keyword: "launch week",
+      tier: "premium_plus",
+    });
+    assert.equal(radar.exportApi, "none_documented");
+    assert.equal(radar.cashtag, "$MOX");
+    assert.match(radar.steps.join(" "), /no documented Radar export API/);
+
+    const chart = mockXAnalytics("@northcurve");
+    assert.equal(chart.mock, true);
+    assert.equal(chart.apiCalled, false);
+    assert.equal(
+      brandAssetBrief({ name: "Mox", kind: "favicon", background: "light" }).generation,
+      "todo",
+    );
+    assert.equal(TOKEN_CREATION_FEE, "free");
+    assert.ok(WEEKLY_MILESTONES.every((item) => item.perk === "tbd"));
+  });
+});
+
 describe("redaction and readme", () => {
   it("redacts secret keys and long base58 strings", () => {
     const secret = "5".repeat(88);
@@ -281,6 +339,10 @@ describe("redaction and readme", () => {
       "TOTP",
       "passkey",
       "70%",
+      "Cloudflare",
+      "creation is free",
+      "Radar",
+      "no documented Radar export API",
     ]) {
       assert.equal(readme.includes(phrase), true, phrase);
     }

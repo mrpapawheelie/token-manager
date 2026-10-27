@@ -60,6 +60,37 @@ export { planTeamLock, previewMeteora } from "./liquidity.js";
 export type { MeteoraPreview, TeamLockPlan } from "./liquidity.js";
 
 export {
+  BRAND_ASSET_SPECS,
+  BRAND_PRINCIPLES,
+  CLOUDFLARE_DOMAIN_STEPS,
+  TOKEN_CREATION_FEE,
+  TOKEN_CREATION_FEE_NOTE,
+  WEEKLY_MILESTONES,
+  brandAssetBrief,
+  brandAssetKindSchema,
+  domainPlanSchema,
+  estimateSyllables,
+  mockXAnalytics,
+  nameScoreInputSchema,
+  nameScoreSchema,
+  planDomain,
+  radarGuide,
+  radarGuideSchema,
+  scoreTokenName,
+  targetMarketSchema,
+  weeklyMilestoneSchema,
+  xAnalyticsSnapshotSchema,
+  type BrandAssetKind,
+  type DomainPlan,
+  type NameScore,
+  type NameScoreInput,
+  type RadarGuide,
+  type TargetMarket,
+  type WeeklyMilestone,
+  type XAnalyticsSnapshot,
+} from "./naming.js";
+
+export {
   SITE_PAGES,
   adsPreview,
   amaPlan,

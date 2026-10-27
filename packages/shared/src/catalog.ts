@@ -67,6 +67,18 @@ export const TOOL_CATALOG = [
     next: "Draft the fair-launch post before the date, including the dump caveat.",
   },
   {
+    name: "name_intake",
+    title: "Target-market intake",
+    stage: "prep_weeks_out",
+    implemented: true,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "Record who the coin is for before anyone picks a name. Audience, problem, category, and tone.",
+    next: "Score candidate words with name_score. Do not buy a domain first.",
+  },
+  {
     name: "social_telegram_plan",
     title: "Telegram plan",
     stage: "prep_weeks_out",
@@ -207,6 +219,77 @@ export const TOOL_CATALOG = [
     next: "Fill the missing items from score_profile.",
   },
   {
+    name: "name_score",
+    title: "Score a name",
+    stage: "design_listing_meta",
+    implemented: true,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "Score a name and ticker: one syllable preferred, few letters, letters only, and a cashtag that does not collide. Phase 1 does not search X.",
+    next: "If the score is preferred, plan the .com with domain_plan.",
+  },
+  {
+    name: "domain_plan",
+    title: "Plan the .com",
+    stage: "design_listing_meta",
+    implemented: true,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "Build a .com plan for Cloudflare with WHOIS redaction. Does not check availability or register anything.",
+    next: "Read the connect steps from domain_connect. Keep Cloudflare tokens out of the tool.",
+  },
+  {
+    name: "domain_connect",
+    title: "Cloudflare connect steps",
+    stage: "design_listing_meta",
+    implemented: true,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "Document the Cloudflare Registrar flow: register the .com, leave privacy on, do not paste credentials.",
+    next: "Brand work is brand_principles, then brand_generate for each asset size.",
+  },
+  {
+    name: "brand_principles",
+    title: "Brand principles",
+    stage: "design_listing_meta",
+    implemented: true,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description: "Rules for a simple mark that still works as a favicon.",
+    next: "Request a brief with brand_generate. Generation itself is TODO.",
+  },
+  {
+    name: "brand_generate",
+    title: "Brand asset brief",
+    stage: "design_listing_meta",
+    implemented: true,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "Returns the size and the brief for a logo, avatar, X header, OG image, or favicon. TODO: no image is generated in Phase 1.",
+    next: "A later phase can draw the asset from this brief. Do not upload secrets with it.",
+  },
+  {
+    name: "badge_milestones",
+    title: "Weekly milestones",
+    stage: "design_listing_meta",
+    implemented: true,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "Weekly checks that can become status labels. Perks are TBD. Token creation stays free.",
+    next: "Ship the week's check in public. Do not invent a perk.",
+  },
+  {
     name: "launch_curve_quote_dev_buy",
     title: "Quote the dev buy",
     stage: "bonding_curve_launch",
@@ -239,8 +322,8 @@ export const TOOL_CATALOG = [
     guardian: false,
     writesSession: false,
     description:
-      "Stub. Requires confirm: true. Phase 1 does not build, sign, or send a bonding-curve create. No sniper and no bundler.",
-    next: "Keep the validated design and the announcement. A later phase will build the create transaction after confirm: true.",
+      "Stub. Requires confirm: true. Bonding-curve creation has no platform fee. Phase 1 does not build, sign, or send it. No sniper and no bundler.",
+    next: "Keep the validated design and the announcement. A later phase will build the free create after confirm: true.",
   },
   {
     name: "directory_build_event",
@@ -587,7 +670,43 @@ export const TOOL_CATALOG = [
     writesSession: false,
     description:
       "Local overview for the admin shell: stage, locks, co-admins, guardian policy, and which panels are still stubs.",
-    next: "Open the web admin shell for the same sections: X posts, ads, Meteora, and the AI chat placeholder.",
+    next: "Open the web admin shell for the same sections: X analytics, Radar guidance, ads, Meteora, and the AI chat placeholder.",
+  },
+  {
+    name: "admin_x_connect",
+    title: "Connect X for the admin shell",
+    stage: "oauth_verify",
+    implemented: false,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "Stub. Starts no OAuth redirect and accepts no token. The admin shell will later pull X analytics for the connected account.",
+    next: "Use admin_x_analytics for the mock chart until a real connect exists.",
+  },
+  {
+    name: "admin_x_analytics",
+    title: "X analytics fixture",
+    stage: "oauth_verify",
+    implemented: true,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "Returns followers, impressions, and engagements clearly marked as mock. Does not call the X API.",
+    next: "Connect the account later with admin_x_connect. Do not paste an API key here.",
+  },
+  {
+    name: "admin_x_radar_guide",
+    title: "X Radar UI guide",
+    stage: "grow_x",
+    implemented: true,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "How to watch a cashtag and a campaign keyword in X Radar (Premium+ or Business). There is no documented Radar export API, so this tool does not call one.",
+    next: "Fee-funded attention boosts stay on ads_preview and ads_submit.",
   },
   {
     name: "ai_chat_project",
@@ -645,7 +764,7 @@ export const TOOL_CATALOG = [
     guardian: false,
     writesSession: false,
     description:
-      "Draft a fee-funded boost or ad. It does not spend. Attention work is allowed. Price support is not the goal.",
+      "Draft a fee-funded boost tied to attention: a cashtag, a campaign keyword, an AMA, or a launch post. It does not spend. It is not a Radar API and it is not price support.",
     next: "ads_submit is the spend stub and requires confirm: true.",
   },
   {

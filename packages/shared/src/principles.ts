@@ -32,6 +32,18 @@
  * (add/remove admins, large liquidity ops, X API credential changes) are designed
  * to require a second factor: a guardian wallet and/or passkey/TOTP. Phase 1
  * stubs that gate and does not verify signatures, passkeys, or TOTP secrets.
+ *
+ * Naming comes after a target-market intake. Prefer one syllable, few letters,
+ * letters only, and an X cashtag that does not collide. The domain is a .com
+ * at Cloudflare with WHOIS redaction. Brand assets are a simple mark. Generation
+ * is TODO.
+ *
+ * Bonding-curve creation has no platform fee. Weekly milestones can become
+ * status labels. Perks for those milestones are TBD.
+ *
+ * X analytics in the admin shell are mock until a real connect exists. X Radar
+ * (Premium+ or Business) is a UI guide: cashtag plus a campaign keyword. There
+ * is no documented Radar export API.
  */
 
 export const PRODUCT_NAME = "Token Manager";

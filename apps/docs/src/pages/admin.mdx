@@ -50,3 +50,13 @@ There is no schema field for a TOTP secret, a passkey private key, or an X API s
 - Meteora liquidity (quote source, create, add, lock, reinvest)
 
 The chat box in the web shell answers in the browser and tells you when a message looks like a secret.
+
+## X analytics and Radar
+
+`admin_x_connect` is a stub. It accepts a public account label and no token.
+
+`admin_x_analytics` returns followers, impressions, and a four-week impressions series **marked mock**. It does not call the X API. The admin page draws that series as bars and says the numbers are fixtures.
+
+X Radar is for **Premium+** or **Business**. The guide is a cashtag (`$TICKER`) plus a campaign keyword, read inside the Radar UI. There is **no documented Radar export API**. `admin_x_radar_guide` says that and does not invent an endpoint.
+
+`ads_preview` and `ads_submit` stay the fee-funded attention path. They are not a Radar download and not a price defense. `ads_submit` requires `confirm: true` and spends nothing in Phase 1.

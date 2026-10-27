@@ -24,8 +24,16 @@ import {
   planTeamLock,
   prepChecklist,
   previewAdminSession,
+  BRAND_PRINCIPLES,
+  CLOUDFLARE_DOMAIN_STEPS,
+  WEEKLY_MILESTONES,
+  brandAssetBrief,
+  mockXAnalytics,
+  planDomain,
   previewMeteora,
   quoteDevBuy,
+  radarGuide,
+  scoreTokenName,
   quoteTokenPrice,
   reviewGuardianGate,
   schedulePrep,
@@ -189,6 +197,15 @@ const implementedHandlers: {
     return ok("prep_x_schedule", { items: schedulePrep(args.launchAt) });
   },
 
+  async name_intake(input) {
+    const market = toolInputSchemas.name_intake.parse(input);
+    return ok("name_intake", {
+      market,
+      creationFee: "free",
+      rule: "Name the audience before the ticker. Creation of the curve has no platform fee.",
+    });
+  },
+
   async social_telegram_plan(input) {
     const args = toolInputSchemas.social_telegram_plan.parse(input);
     return ok("social_telegram_plan", { lines: telegramPlan(args) });
@@ -251,6 +268,45 @@ const implementedHandlers: {
   async score_profile(input) {
     const signals = toolInputSchemas.score_profile.parse(input);
     return ok("score_profile", scoreProfile(signals));
+  },
+
+  async name_score(input) {
+    const args = toolInputSchemas.name_score.parse(input);
+    return ok("name_score", scoreTokenName(args));
+  },
+
+  async domain_plan(input) {
+    const args = toolInputSchemas.domain_plan.parse(input);
+    return ok("domain_plan", planDomain(args.label));
+  },
+
+  async domain_connect(input) {
+    const args = toolInputSchemas.domain_connect.parse(input);
+    return ok("domain_connect", {
+      hostname: args.hostname ?? null,
+      registered: false,
+      steps: CLOUDFLARE_DOMAIN_STEPS,
+    });
+  },
+
+  async brand_principles() {
+    return ok("brand_principles", { principles: BRAND_PRINCIPLES });
+  },
+
+  async brand_generate(input) {
+    const args = toolInputSchemas.brand_generate.parse(input);
+    return ok("brand_generate", {
+      ...brandAssetBrief(args),
+      todo: "TODO(phase-2): generate the image from this brief. Phase 1 returns the spec only.",
+    });
+  },
+
+  async badge_milestones() {
+    return ok("badge_milestones", {
+      creationFee: "free",
+      perks: "tbd",
+      milestones: WEEKLY_MILESTONES,
+    });
   },
 
   async score_benefits() {
@@ -449,6 +505,8 @@ const implementedHandlers: {
         { id: "guardian", status: state.guardianPolicy ? "saved_not_enforced" : "unset" },
         { id: "ai_chat", status: "stub" },
         { id: "x_posts", status: "stub" },
+        { id: "x_analytics", status: "mock" },
+        { id: "radar", status: "guide_only" },
         { id: "ads", status: "stub" },
         { id: "meteora", status: "stub" },
       ],
@@ -458,6 +516,16 @@ const implementedHandlers: {
   async grow_x_ama_plan(input) {
     const args = toolInputSchemas.grow_x_ama_plan.parse(input);
     return ok("grow_x_ama_plan", { lines: amaPlan(args) });
+  },
+
+  async admin_x_analytics(input) {
+    const args = toolInputSchemas.admin_x_analytics.parse(input);
+    return ok("admin_x_analytics", mockXAnalytics(args.handle));
+  },
+
+  async admin_x_radar_guide(input) {
+    const args = toolInputSchemas.admin_x_radar_guide.parse(input);
+    return ok("admin_x_radar_guide", radarGuide(args));
   },
 
   async grow_x_dev_api_checklist(input) {

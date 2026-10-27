@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import type { ToolName } from "./catalog.js";
 import { CAVEMAN_TOPICS } from "./copy.js";
+import { brandAssetKindSchema, nameScoreInputSchema, targetMarketSchema } from "./naming.js";
 import {
   acknowledgementsSchema,
   claimProofSchema,
@@ -369,6 +370,46 @@ export const adsPreviewInputSchema = z
   })
   .strict();
 
+export const domainPlanInputSchema = z
+  .object({
+    label: z.string().min(1).max(32),
+  })
+  .strict();
+
+export const domainConnectInputSchema = z
+  .object({
+    hostname: z.string().min(1).max(80).optional(),
+  })
+  .strict();
+
+export const brandGenerateInputSchema = z
+  .object({
+    name: z.string().min(1).max(32),
+    kind: brandAssetKindSchema,
+    background: z.enum(["light", "dark"]).default("light"),
+  })
+  .strict();
+
+export const adminXConnectInputSchema = z
+  .object({
+    accountLabel: z.string().min(1).max(80),
+  })
+  .strict();
+
+export const adminXAnalyticsInputSchema = z
+  .object({
+    handle: z.string().min(1).max(50),
+  })
+  .strict();
+
+export const radarGuideInputSchema = z
+  .object({
+    ticker: z.string().min(1).max(10),
+    keyword: z.string().min(1).max(40),
+    tier: z.enum(["premium_plus", "business"]),
+  })
+  .strict();
+
 export const yearChecklistInputSchema = z
   .object({
     monthsLive: z.number().int().min(0).max(24),
@@ -390,6 +431,7 @@ export const toolInputSchemas = {
   resume: resumeInputSchema,
   prep_x_checklist: prepXChecklistInputSchema,
   prep_x_schedule: prepXScheduleInputSchema,
+  name_intake: targetMarketSchema,
   social_telegram_plan: socialTelegramInputSchema,
   social_x_community_plan: socialXCommunityInputSchema,
   caveman_list_topics: emptyInputSchema,
@@ -402,6 +444,12 @@ export const toolInputSchemas = {
   badge_preview: badgePreviewInputSchema,
   score_profile: profileSignalsSchema,
   score_benefits: emptyInputSchema,
+  name_score: nameScoreInputSchema,
+  domain_plan: domainPlanInputSchema,
+  domain_connect: domainConnectInputSchema,
+  brand_principles: emptyInputSchema,
+  brand_generate: brandGenerateInputSchema,
+  badge_milestones: emptyInputSchema,
   launch_curve_quote_dev_buy: devBuyInputSchema,
   launch_curve_build_announcement: announcementInputSchema,
   launch_curve_submit: launchSubmitInputSchema,
@@ -434,6 +482,9 @@ export const toolInputSchemas = {
   admin_x_credentials_change: adminCredentialsInputSchema,
   admin_guardian_policy: adminPolicyInputSchema,
   admin_dashboard_snapshot: sessionOnlyInputSchema,
+  admin_x_connect: adminXConnectInputSchema,
+  admin_x_analytics: adminXAnalyticsInputSchema,
+  admin_x_radar_guide: radarGuideInputSchema,
   ai_chat_project: aiChatInputSchema,
   grow_x_ama_plan: amaInputSchema,
   grow_x_boost_plan: boostInputSchema,
