@@ -41,16 +41,21 @@ import {
   privySessionStub,
   reviewEmailProof,
   BRAND_PRINCIPLES,
-  CLOUDFLARE_DOMAIN_STEPS,
   WEEKLY_MILESTONES,
   brandAssetBrief,
   buildScannerToken,
   compareOriginality,
   coachOriginality,
+  connectDomainGuide,
+  lookupComAvailability,
   mockXAnalytics,
   placeholderScanNotification,
   planDomain,
   planFounderGithubRepo,
+  recordTargetMarket,
+  renderBrandAsset,
+  renderBrandKit,
+  shortlistNames,
   previewMeteora,
   quoteDevBuy,
   radarGuide,
@@ -73,6 +78,7 @@ import {
   type SensitiveAction,
   type ToolName,
 } from "@token-manager/shared";
+import { writeBrandAsset, writeBrandAssets } from "@token-manager/shared/brand-files";
 
 import { DEFAULT_SESSION_ID, ensureSession, updateSession } from "./session.js";
 
@@ -236,11 +242,7 @@ const implementedHandlers: {
 
   async name_intake(input) {
     const market = toolInputSchemas.name_intake.parse(input);
-    return ok("name_intake", {
-      market,
-      creationFee: "free",
-      rule: "Name the audience before the ticker. Creation of the curve has no platform fee.",
-    });
+    return ok("name_intake", recordTargetMarket(market));
   },
 
   async social_telegram_plan(input) {
@@ -312,18 +314,20 @@ const implementedHandlers: {
     return ok("name_score", scoreTokenName(args));
   },
 
+  async name_shortlist(input) {
+    const args = toolInputSchemas.name_shortlist.parse(input);
+    return ok("name_shortlist", shortlistNames(args));
+  },
+
   async domain_plan(input) {
     const args = toolInputSchemas.domain_plan.parse(input);
-    return ok("domain_plan", planDomain(args.label));
+    const availability = await lookupComAvailability(args.label);
+    return ok("domain_plan", planDomain(args.label, availability));
   },
 
   async domain_connect(input) {
     const args = toolInputSchemas.domain_connect.parse(input);
-    return ok("domain_connect", {
-      hostname: args.hostname ?? null,
-      registered: false,
-      steps: CLOUDFLARE_DOMAIN_STEPS,
-    });
+    return ok("domain_connect", connectDomainGuide(args.hostname));
   },
 
   async brand_principles() {
@@ -332,9 +336,42 @@ const implementedHandlers: {
 
   async brand_generate(input) {
     const args = toolInputSchemas.brand_generate.parse(input);
+    const rendered = args.kit ? renderBrandKit(args) : [renderBrandAsset(args)];
+    let written = false;
+    let assets = rendered.map((asset) => ({
+      kind: asset.kind,
+      filename: asset.filename,
+      relativePath: null as string | null,
+      width: asset.width,
+      height: asset.height,
+      pixels: asset.pixels,
+      mime: asset.mime,
+      svg: asset.svg,
+    }));
+    try {
+      const files = args.kit ? writeBrandAssets(args) : [writeBrandAsset(args)];
+      written = true;
+      assets = files.map((asset) => ({
+        kind: asset.kind,
+        filename: asset.filename,
+        relativePath: asset.relativePath,
+        width: asset.width,
+        height: asset.height,
+        pixels: asset.pixels,
+        mime: asset.mime,
+        svg: asset.svg,
+      }));
+    } catch {
+      written = false;
+    }
+    const focus = assets.find((asset) => asset.kind === args.kind) ?? assets[0];
     return ok("brand_generate", {
-      ...brandAssetBrief(args),
-      todo: "TODO(phase-2): generate the image from this brief. Phase 1 returns the spec only.",
+      brief: brandAssetBrief(args),
+      written,
+      ownership: rendered[0]?.ownership ?? null,
+      iteration: rendered[0]?.iteration ?? null,
+      directory: focus?.relativePath?.replace(/\/[^/]+$/, "") ?? null,
+      assets,
     });
   },
 

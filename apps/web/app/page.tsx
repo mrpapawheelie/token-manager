@@ -25,6 +25,10 @@ export default function HomePage() {
           <a className="underline" href="/template">
             Pre-mint site template
           </a>
+          {" · "}
+          <a className="underline" href="/brand">
+            Name and brand
+          </a>
         </p>
       </div>
       <Directory

@@ -40,9 +40,11 @@
  * stubs that gate and does not verify signatures, passkeys, or TOTP secrets.
  *
  * Naming comes after a target-market intake. Prefer one syllable, few letters,
- * letters only, and an X cashtag that does not collide. The domain is a .com
- * at Cloudflare with WHOIS redaction. Brand assets are a simple mark. Generation
- * is TODO.
+ * letters only, a spellable recognizable word, and an X cashtag that does not
+ * collide. Cashtag checks are local heuristics unless the caller reports a hit.
+ * The domain is a .com at Cloudflare with WHOIS redaction, on the founder's
+ * account. Brand assets are a simple geometric mark drawn as SVG files the
+ * founder downloads.
  *
  * Bonding-curve creation has no platform fee. Weekly milestones can become
  * status labels. Perks for those milestones are TBD.

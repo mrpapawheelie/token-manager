@@ -1,0 +1,43 @@
+---
+layout: ../layouts/DocLayout.astro
+title: Domain
+---
+
+import {
+  CLOUDFLARE_DOMAIN_STEPS,
+  DOMAIN_AVAILABILITY_GAP,
+  DOMAIN_OWNERSHIP_NOTE,
+} from "@token-manager/shared";
+
+# Domain
+
+Prefer a **.com**, registered at **Cloudflare**, with WHOIS redaction. Tools: `domain_plan`, then `domain_connect`. Naming rules are on [Naming](/naming).
+
+## Ownership
+
+{DOMAIN_OWNERSHIP_NOTE}
+
+Buying the name in the Cloudflare dashboard is the whole registration. Token Manager does not charge a fee for it and does not need to be in the loop.
+
+## Connect your own Cloudflare account
+
+1. Create the Cloudflare account yourself at the Cloudflare dashboard. Keep the login.
+2. Optional hint only: put `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` in the environment of the MCP or web process. The token needs Account Intel read. Leave both unset and `domain_plan` stays offline.
+3. Do not paste the token, the account password, or an API key into a tool argument. The schemas reject those fields.
+4. When the hint runs, it calls `GET /accounts/{account_id}/intel/whois?domain=`. That is not the Registrar purchase API.
+5. A WHOIS record means the name looks registered (`available: false`). Any other response leaves `available` null. A miss is not proof you can buy the name.
+6. Open **Domain Registration** in the dashboard, search the `.com`, and pay from your Cloudflare billing.
+7. Leave contact privacy on. Cloudflare Registrar redacts WHOIS contacts. That is the private registration this project uses.
+8. Point DNS at the project site after the name is final.
+
+{DOMAIN_AVAILABILITY_GAP}
+
+## Steps the tool returns
+
+<ol>
+  {CLOUDFLARE_DOMAIN_STEPS.map((step) => (
+    <li>{step}</li>
+  ))}
+</ol>
+
+`domain_plan` builds `name.com` only when the label is letters only. `purchased` stays false. `storesSecrets` stays false.

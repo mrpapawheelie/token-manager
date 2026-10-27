@@ -39,6 +39,6 @@ The MCP server speaks stdio. Build it, then point Cursor at the repo:
 
 ## What you should not paste
 
-Seeds, private keys, OAuth tokens, TOTP secrets, and API keys. The schemas refuse unknown secret fields. Public wallet addresses are allowed. Spendy tools still need `confirm: true`, and Phase 1 will not send the transaction.
+Seeds, private keys, OAuth tokens, TOTP secrets, and API keys. The schemas refuse unknown secret fields. A Cloudflare token belongs in `CLOUDFLARE_API_TOKEN` in the environment, not in a tool argument. Public wallet addresses are allowed. Spendy tools still need `confirm: true`, and this repo still does not send the transaction.
 
 Session JSON lives in `.token-manager/` under the process working directory unless `TOKEN_MANAGER_SESSION_PATH` is set. That folder is gitignored.

@@ -1,0 +1,79 @@
+---
+layout: ../layouts/DocLayout.astro
+title: Brand
+---
+
+import {
+  BRAND_ASSET_OWNERSHIP,
+  BRAND_ASSET_SPECS,
+  BRAND_ITERATION_NOTE,
+  BRAND_PRINCIPLES,
+} from "@token-manager/shared";
+
+# Brand
+
+`brand_principles`, then `brand_generate`. The web preview is `/brand` on the web app. It calls the same renderer as the MCP tool.
+
+## Mark
+
+<ul>
+  {BRAND_PRINCIPLES.map((line) => (
+    <li>{line}</li>
+  ))}
+</ul>
+
+The mark is geometric and high contrast: one of four shapes (disc, tile, peak, gem) from the name, on a light or dark field. Words stay in the wordmark on the X header and the OG image. The logo, app icon, avatar, and favicon are the mark alone, so the favicon still reads at 32px.
+
+There is no paid image API and no API key field. `variant` from 0 to 11 picks another shape and palette. {BRAND_ITERATION_NOTE}
+
+## Sizes
+
+<table>
+  <thead>
+    <tr>
+      <th>Kind</th>
+      <th>Pixels</th>
+      <th>File</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>logo</td>
+      <td>{BRAND_ASSET_SPECS.logo.pixels}</td>
+      <td>logo.svg</td>
+    </tr>
+    <tr>
+      <td>app_icon</td>
+      <td>{BRAND_ASSET_SPECS.app_icon.pixels}</td>
+      <td>app-icon.svg</td>
+    </tr>
+    <tr>
+      <td>avatar</td>
+      <td>{BRAND_ASSET_SPECS.avatar.pixels}</td>
+      <td>avatar.svg</td>
+    </tr>
+    <tr>
+      <td>x_header</td>
+      <td>{BRAND_ASSET_SPECS.x_header.pixels}</td>
+      <td>x-header.svg</td>
+    </tr>
+    <tr>
+      <td>og</td>
+      <td>{BRAND_ASSET_SPECS.og.pixels}</td>
+      <td>og.svg</td>
+    </tr>
+    <tr>
+      <td>favicon</td>
+      <td>{BRAND_ASSET_SPECS.favicon.pixels}</td>
+      <td>favicon.svg</td>
+    </tr>
+  </tbody>
+</table>
+
+`brand_generate` with `kit: true` writes all six. Without it, the tool writes the one `kind` you pass. Files land in `artifacts/brand/<name>/v<variant>/` unless `TOKEN_MANAGER_BRAND_DIR` is set. That folder is gitignored.
+
+## Download
+
+{BRAND_ASSET_OWNERSHIP}
+
+On `/brand`, use the download buttons. Copy the SVG folder into the repository or design folder you control. A host that wants `.ico` can rasterize `favicon.svg`. The source file is the SVG.

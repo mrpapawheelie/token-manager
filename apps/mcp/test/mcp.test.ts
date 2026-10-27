@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
+import { mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
@@ -10,10 +10,11 @@ import { TOOL_CATALOG } from "@token-manager/shared";
 
 import { createTokenManagerServer } from "../src/server.ts";
 
-process.env.TOKEN_MANAGER_SESSION_PATH = path.join(
-  mkdtempSync(path.join(tmpdir(), "token-manager-")),
-  "session.json",
-);
+const scratch = mkdtempSync(path.join(tmpdir(), "token-manager-"));
+process.env.TOKEN_MANAGER_SESSION_PATH = path.join(scratch, "session.json");
+process.env.TOKEN_MANAGER_BRAND_DIR = path.join(scratch, "brand");
+delete process.env.CLOUDFLARE_API_TOKEN;
+delete process.env.CLOUDFLARE_ACCOUNT_ID;
 
 const ADDRESS = "11111111111111111111111111111111";
 
@@ -183,6 +184,97 @@ describe("mcp server", () => {
       assert.equal(admin.status, "not_implemented");
       assert.equal(admin.data.guardian.enforced, false);
       assert.match(admin.next, /TODO/);
+    });
+  });
+
+  it("scores a shortlist, stays offline on domains, and writes brand svgs", async () => {
+    await withClient(async (client) => {
+      const market = {
+        audience: "People who say the name out loud",
+        problem: "Long coin names get mistyped",
+        category: "tooling",
+        tone: "plain",
+      };
+      const intake = JSON.parse(
+        textOf(
+          await client.callTool({
+            name: "name_intake",
+            arguments: market,
+          }),
+        ),
+      ) as { data: { marketRecorded: boolean; creationFee: string } };
+      assert.equal(intake.data.marketRecorded, true);
+      assert.equal(intake.data.creationFee, "free");
+
+      const shortlist = JSON.parse(
+        textOf(
+          await client.callTool({
+            name: "name_shortlist",
+            arguments: {
+              market,
+              candidates: [
+                { name: "Moonshot", ticker: "SHOT" },
+                { name: "Mox", ticker: "MOX" },
+              ],
+            },
+          }),
+        ),
+      ) as {
+        data: { liveXSearch: boolean; best: { name: string; preferred: boolean } | null };
+      };
+      assert.equal(shortlist.data.liveXSearch, false);
+      assert.equal(shortlist.data.best?.name, "Mox");
+      assert.equal(shortlist.data.best?.preferred, true);
+
+      const domain = JSON.parse(
+        textOf(
+          await client.callTool({
+            name: "domain_plan",
+            arguments: { label: "Mox" },
+          }),
+        ),
+      ) as {
+        data: {
+          hostname: string;
+          purchased: boolean;
+          availability: { source: string; checked: boolean; livePurchase: boolean };
+        };
+      };
+      assert.equal(domain.data.hostname, "mox.com");
+      assert.equal(domain.data.purchased, false);
+      assert.equal(domain.data.availability.source, "offline");
+      assert.equal(domain.data.availability.checked, false);
+      assert.equal(domain.data.availability.livePurchase, false);
+
+      const brand = JSON.parse(
+        textOf(
+          await client.callTool({
+            name: "brand_generate",
+            arguments: { name: "Mox", kind: "logo", kit: true, background: "light" },
+          }),
+        ),
+      ) as {
+        data: {
+          written: boolean;
+          assets: Array<{
+            kind: string;
+            width: number;
+            height: number;
+            relativePath: string;
+          }>;
+        };
+      };
+      assert.equal(brand.data.written, true);
+      const header = brand.data.assets.find((asset) => asset.kind === "x_header");
+      const og = brand.data.assets.find((asset) => asset.kind === "og");
+      const favicon = brand.data.assets.find((asset) => asset.kind === "favicon");
+      assert.equal(header?.width, 1500);
+      assert.equal(header?.height, 500);
+      assert.equal(og?.width, 1200);
+      assert.equal(og?.height, 630);
+      assert.equal(favicon?.width, 32);
+      assert.equal(favicon?.height, 32);
+      assert.match(readFileSync(favicon?.relativePath ?? "", "utf8"), /width="32"/);
     });
   });
 });

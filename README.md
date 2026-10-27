@@ -33,7 +33,7 @@ KYC is optional (`KycTier` 0–3). Tier 0 is none. Tier 1 is OAuth to an already
 
 Factual status labels (locked liquidity, auto-compounding, GitHub, X, Telegram, team lock) start grey and turn on when the check is true. A profile completion score (for example **70%** complete) shows what is still missing. Those labels are checks, not trophies.
 
-Write the target market before the name (`name_intake`). Score the word for one syllable, few letters, letters only, and a clear X cashtag (`name_score`). Prefer a `.com` at Cloudflare with WHOIS redaction (`domain_plan`, `domain_connect`). Brand files are a simple mark; `brand_generate` returns the brief and does not draw the image yet.
+Write the target market before the name (`name_intake`). Score one word (`name_score`) or rank several (`name_shortlist`) for one syllable, few letters, letters only, a spellable recognizable word, and a cashtag that is not an obvious collision. Those checks are local. They do not search X. Prefer a `.com` at Cloudflare with WHOIS redaction (`domain_plan`, `domain_connect`). An availability hint runs only when `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` are set in the environment. The tools do not buy the domain. `brand_generate` writes SVG files (logo, app icon, X avatar, 1500×500 header, 1200×630 OG, 32×32 favicon) under `artifacts/brand/`. The web preview is `/brand`. Download the files. They stay yours.
 
 Bonding-curve **creation is free** (no platform fee). `launch_curve_submit` still requires `confirm: true` and does not send a transaction in Phase 1. Weekly milestones can become labels (`badge_milestones`). Perks for those milestones are TBD.
 

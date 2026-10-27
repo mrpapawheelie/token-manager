@@ -274,11 +274,24 @@ describe("profile, identity, guardian, price", () => {
 
 describe("naming, domain, and attention", () => {
   it("prefers a short letters-only name with a clear cashtag", () => {
-    const preferred = scoreTokenName({ name: "Mox", ticker: "MOX", cashtagTaken: false });
+    const market = {
+      audience: "People who want a short coin name",
+      problem: "Long tickers are hard to say in a chat",
+      category: "tooling",
+      tone: "plain",
+    };
+    const preferred = scoreTokenName({
+      name: "Mox",
+      ticker: "MOX",
+      cashtagTaken: false,
+      market,
+    });
     assert.equal(preferred.preferred, true);
+    assert.equal(preferred.marketRecorded, true);
     assert.equal(preferred.syllableEstimate, 1);
     assert.equal(preferred.cashtag, "$MOX");
     assert.equal(preferred.score, 100);
+    assert.equal(preferred.collision.liveXSearch, false);
 
     const long = scoreTokenName({
       name: "Moonshot",
@@ -314,10 +327,17 @@ describe("naming, domain, and attention", () => {
     const chart = mockXAnalytics("@northcurve");
     assert.equal(chart.mock, true);
     assert.equal(chart.apiCalled, false);
-    assert.equal(
-      brandAssetBrief({ name: "Mox", kind: "favicon", background: "light" }).generation,
-      "todo",
-    );
+    const favicon = brandAssetBrief({
+      name: "Mox",
+      kind: "favicon",
+      background: "light",
+    });
+    assert.equal(favicon.generation, "svg");
+    assert.equal(favicon.width, 32);
+    assert.equal(favicon.height, 32);
+    assert.equal(domain.purchased, false);
+    assert.equal(domain.availability.checked, false);
+    assert.equal(domain.availability.livePurchase, false);
     assert.equal(TOKEN_CREATION_FEE, "free");
     assert.ok(WEEKLY_MILESTONES.every((item) => item.perk === "tbd"));
   });

@@ -66,5 +66,7 @@ const phase1Instructions = [
   "Sensitive admin and liquidity tools also require a guardian acknowledgement. Phase 1 does not verify it.",
   "Sniper and bundler bots are out of scope.",
   "Founder ownership is non-negotiable: wallets, GitHub repos, domains, and X stay on the founder's accounts. Guidance never blocks DIY.",
+  "Record the target market before a name can be preferred. name_score collision checks are local heuristics and do not search X.",
+  "Domain checks never take an API token as an argument. brand_generate writes SVG files the founder owns and does not call a paid image API.",
   "Scanner flags stay unverified, false, or null when a check was not made. Do not invent a pass.",
 ].join(" ");
