@@ -4,6 +4,14 @@ Year-one Solana token manager for Pump.fun-style **bonding-curve** launches. The
 
 Phase 1 is the foundation: shared schemas, a stdio MCP server, a docs site, and a platform shell with mock directory data. Chain writes, OAuth token exchange, Codex calls, and Sign-In With Solana checks are stubs.
 
+## Platform rule #1 (non-negotiable): founder ownership
+
+Everything in Token Manager is **optional**. Guidance never blocks a do-it-yourself launch.
+
+Wallets, GitHub repositories, domains, and X accounts stay under the **founder's own accounts**. If the founder leaves Token Manager tomorrow, the coin, the repo, the domain, and the X account keep working. This repo is not the source of truth for those accounts. GitHub OAuth, when it exists, targets their login (`github_oauth_begin`, `github_repo_plan`). A platform org is refused.
+
+This rule is `PLATFORM_RULE_FOUNDER_OWNERSHIP` in `packages/shared/src/principles.ts`. The numbered principles below do not override it.
+
 ## Principles
 
 These are also encoded in `packages/shared/src/principles.ts`.
@@ -26,6 +34,10 @@ Write the target market before the name (`name_intake`). Score the word for one 
 Bonding-curve **creation is free** (no platform fee). `launch_curve_submit` still requires `confirm: true` and does not send a transaction in Phase 1. Weekly milestones can become labels (`badge_milestones`). Perks for those milestones are TBD.
 
 The admin shell shows X followers, impressions, and engagements as **mock** charts. `admin_x_connect` does not start OAuth. X Radar (Premium+ or Business) is a UI guide for a cashtag plus a campaign keyword. There is no documented Radar export API, and this repo does not fake one. Fee-funded boosts stay on `ads_*` as attention, not as a Radar download.
+
+`claims_intake`, `originality_compare`, and `originality_coach` record a use case and compare it with a list the caller supplies. They do not search the web and they do not mark a name unique. Contract checks are the easy half of a LARP-style scan. Claim and copycat risk is the hard half.
+
+The public scanner sketch is `GET /api/scanner/tokens` and `GET /api/scanner/tokens/{id}` on the web app, plus `GET /api/scanner/openapi`. Payloads use `ScannerTokenPayload` and `VerificationFlags`. Missing steps are `false`, `null`, or `"unverified"`. Phase 1 rows are `mock: true` and `live: false`. `directory_log_create` attaches a scan-notification placeholder and does not call a webhook. The fixture does not enforce a rate limit; a live deployment should cap anonymous reads at about 60 requests per minute per IP. See the docs page **Scanner API**.
 
 ## Per-project admin
 
@@ -62,7 +74,7 @@ Stage order lives in `packages/shared/src/stages.ts`. Tool names and stub vs imp
 ```
 apps/mcp        stdio MCP server
 apps/docs       docs site
-apps/web        directory, token page, admin shell (mock data)
+apps/web        directory, token page, admin shell, scanner JSON (mock data)
 packages/shared schemas, stage ids, pure helpers, stub price clients
 templates/      metadata, caveman script, fair-launch copy
 ```
@@ -86,6 +98,7 @@ Stubs (input is validated, then the tool returns `status: "not_implemented"`):
 - `meteora_create_pool`, `meteora_add_liquidity`, `meteora_lock_lp`, `meteora_reinvest_fees`
 - `oauth_begin`, `oauth_connection_status`, `verify_connected_accounts`, `verify_contract_link`
 - `admin_add_co_admin`, `admin_remove_co_admin`, `admin_x_credentials_change`
+- `github_oauth_begin`, `scanner_notify`
 - `ai_chat_project`, `grow_x_boost_plan`, `ads_submit`, `site_publish_proofs`
 
 Spendy tools require `confirm: true` even though they do not broadcast. Guardian tools also require `guardianAcknowledged: true` and a method of `wallet`, `passkey`, or `totp`.

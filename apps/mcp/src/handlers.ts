@@ -28,8 +28,13 @@ import {
   CLOUDFLARE_DOMAIN_STEPS,
   WEEKLY_MILESTONES,
   brandAssetBrief,
+  buildScannerToken,
+  compareOriginality,
+  coachOriginality,
   mockXAnalytics,
+  placeholderScanNotification,
   planDomain,
+  planFounderGithubRepo,
   previewMeteora,
   quoteDevBuy,
   radarGuide,
@@ -373,7 +378,61 @@ const implementedHandlers: {
       persisted: "local-session-only",
       eventId: args.event.id,
       state,
+      scanNotification: placeholderScanNotification(),
     });
+  },
+
+  async scanner_preview(input) {
+    const args = toolInputSchemas.scanner_preview.parse(input);
+    return ok(
+      "scanner_preview",
+      buildScannerToken({
+        id: args.id,
+        name: args.name,
+        symbol: args.symbol,
+        category: args.category,
+        shortDescription: args.shortDescription,
+        contract: args.contract ?? null,
+        mock: args.mock,
+        identityMode: args.identityMode ?? null,
+        socials: { x: args.x ?? null, github: args.github ?? null },
+        flags: {
+          connectedX: args.connectedX,
+          connectedGithub: args.connectedGithub,
+          verificationStatus: args.verificationStatus,
+          lockTier: args.lockTier,
+          lockAssessed: args.lockAssessed,
+          autoCompound: args.autoCompound,
+          profileCompletion: args.profileCompletion,
+          claims: args.claims,
+        },
+      }),
+    );
+  },
+
+  async claims_intake(input) {
+    const args = toolInputSchemas.claims_intake.parse(input);
+    return ok("claims_intake", {
+      ...args,
+      optional: true,
+      blocksDiy: false,
+      stored: false,
+    });
+  },
+
+  async originality_compare(input) {
+    const args = toolInputSchemas.originality_compare.parse(input);
+    return ok("originality_compare", compareOriginality(args));
+  },
+
+  async originality_coach(input) {
+    const args = toolInputSchemas.originality_coach.parse(input);
+    return ok("originality_coach", coachOriginality(args));
+  },
+
+  async github_repo_plan(input) {
+    const args = toolInputSchemas.github_repo_plan.parse(input);
+    return ok("github_repo_plan", planFounderGithubRepo(args));
   },
 
   async graduate_checklist(input) {

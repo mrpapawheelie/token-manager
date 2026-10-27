@@ -17,7 +17,7 @@ A successful create becomes a directory row:
 - lock proofs
 - verification status and the methods used
 
-`directory_build_event` checks that object. `directory_log_create` stores it on the **local** session and says so. The hosted directory is the web shell, and Phase 1 fills it with mock rows.
+`directory_build_event` checks that object. `directory_log_create` stores it on the **local** session and says so. It also returns an optional scan-notification placeholder that does not call a webhook. The hosted directory is the web shell, and Phase 1 fills it with mock rows. Scanner authors read those rows at `GET /api/scanner/tokens`. See [Scanner API](/scanner). Missing checks stay unverified, false, or null.
 
 ## OAuth
 

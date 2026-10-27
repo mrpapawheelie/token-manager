@@ -114,6 +114,7 @@ export {
   METEORA_COMPOUNDING_FEE_BPS,
   PRINCIPLES,
   PRODUCT_NAME,
+  PLATFORM_RULE_FOUNDER_OWNERSHIP,
   PROFILE_COMPLETION_BENEFIT,
   TEAM_LOCK_EXTRA_SUPPLY_BPS_MIN,
   TEAM_LOCK_EXTRA_SUPPLY_BPS_TYPICAL_MAX,
@@ -121,6 +122,27 @@ export {
 } from "./principles.js";
 
 export { redactSecrets } from "./redact.js";
+
+export {
+  SCANNER_OPENAPI,
+  SCANNER_RATE_LIMIT,
+  buildScannerToken,
+  claimFieldSchema,
+  compareOriginality,
+  coachOriginality,
+  originalityCompareSchema,
+  placeholderScanNotification,
+  planFounderGithubRepo,
+  scanNotificationSchema,
+  scannerTokenPayloadSchema,
+  verificationFlags,
+  verificationFlagsSchema,
+  type ClaimField,
+  type OriginalityCompare,
+  type ScanNotification,
+  type ScannerTokenPayload,
+  type VerificationFlags,
+} from "./scanner.js";
 
 export {
   acknowledgementsSchema,

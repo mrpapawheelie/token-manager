@@ -16,11 +16,18 @@ import {
   createProgressState,
   lockProofSchema,
   meteoraPoolConfigSchema,
+  PLATFORM_RULE_FOUNDER_OWNERSHIP,
+  SCANNER_OPENAPI,
+  SCANNER_RATE_LIMIT,
   TOKEN_CREATION_FEE,
   WEEKLY_MILESTONES,
   brandAssetBrief,
+  buildScannerToken,
+  compareOriginality,
   mockXAnalytics,
+  placeholderScanNotification,
   planDomain,
+  planFounderGithubRepo,
   quoteDevBuy,
   quoteTokenPrice,
   radarGuide,
@@ -302,6 +309,72 @@ describe("naming, domain, and attention", () => {
   });
 });
 
+describe("founder ownership and scanner flags", () => {
+  it("keeps founder ownership non-negotiable and optional", () => {
+    assert.equal(PLATFORM_RULE_FOUNDER_OWNERSHIP.nonNegotiable, true);
+    assert.equal(PLATFORM_RULE_FOUNDER_OWNERSHIP.optional, true);
+    assert.equal(PLATFORM_RULE_FOUNDER_OWNERSHIP.blocksDiy, false);
+    assert.match(PLATFORM_RULE_FOUNDER_OWNERSHIP.text, /leaves Token Manager/);
+  });
+
+  it("does not invent a pass when a check is missing", () => {
+    const token = buildScannerToken({
+      id: "sample",
+      name: "Sample",
+      symbol: "SAM",
+      category: "tooling",
+      shortDescription: "Missing checks stay empty.",
+      mock: true,
+      flags: {
+        connectedX: false,
+        verificationStatus: "pending",
+        claims: [],
+      },
+    });
+    assert.equal(token.live, false);
+    assert.equal(token.verification.connected_x, false);
+    assert.equal(token.verification.connected_github, "unverified");
+    assert.equal(token.verification.id_verified, "unverified");
+    assert.equal(token.verification.lp_locked_tier, "unverified");
+    assert.equal(token.verification.auto_compound, "unverified");
+    assert.equal(token.verification.profile_completion, null);
+    assert.deepEqual(token.verification.claim_fields, []);
+    assert.equal(SCANNER_RATE_LIMIT.enforced, false);
+    assert.equal(
+      SCANNER_OPENAPI.paths["/api/scanner/tokens/{id}"].get.responses[
+        "404"
+      ].description.includes("null"),
+      true,
+    );
+    const hook = placeholderScanNotification();
+    assert.equal(hook.enqueued, false);
+    assert.equal(hook.webhookCalled, false);
+  });
+
+  it("compares claims locally and refuses a platform GitHub org", () => {
+    const empty = compareOriginality({ name: "Mox", statement: "A wallet helper." });
+    assert.equal(empty.verdict, "unchecked");
+    assert.equal(empty.unique, null);
+    assert.equal(empty.searched, false);
+    const overlap = compareOriginality({
+      name: "Mox",
+      statement: "A wallet helper for founders.",
+      corpus: [{ name: "Other", summary: "A wallet helper for founders." }],
+    });
+    assert.equal(overlap.verdict, "possible_overlap");
+    assert.equal(overlap.unique, null);
+    const repo = planFounderGithubRepo({
+      founderLogin: "token-manager",
+      repoName: "launch",
+      action: "create",
+    });
+    assert.equal(repo.acceptable, false);
+    assert.equal(repo.owner, null);
+    assert.equal(repo.created, false);
+    assert.equal(repo.platformOrg, null);
+  });
+});
+
 describe("redaction and readme", () => {
   it("redacts secret keys and long base58 strings", () => {
     const secret = "5".repeat(88);
@@ -343,6 +416,9 @@ describe("redaction and readme", () => {
       "creation is free",
       "Radar",
       "no documented Radar export API",
+      "founder ownership",
+      "leaves Token Manager",
+      "unverified",
     ]) {
       assert.equal(readme.includes(phrase), true, phrase);
     }

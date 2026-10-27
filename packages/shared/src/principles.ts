@@ -2,6 +2,12 @@
  * Year-one Solana token manager for Pump.fun-style bonding-curve launches.
  * Classic SPL mint-first launches are out of scope.
  *
+ * Platform rule #1 (non-negotiable): founder ownership.
+ * Every step here is optional. Guidance never blocks a do-it-yourself launch.
+ * Wallets, GitHub repos, domains, and X accounts stay under the founder's own
+ * accounts. If they leave Token Manager tomorrow, the project keeps working.
+ * This repo is not the source of truth for those accounts.
+ *
  * Principles — keep the product pointed here:
  * 1. About 5% of supply is the post-graduation liquidity rule of thumb (the dev buy).
  * 2. Fair-launch honesty: name the launch time. Warn that snipers and bundlers are
@@ -126,3 +132,13 @@ export const PRINCIPLES: readonly Principle[] = [
 
 export const PROFILE_COMPLETION_BENEFIT =
   "A finished profile shows the launch time, the dump risk, where liquidity is locked, and which accounts are actually connected. Grey labels are unfinished checks. Finishing them gives a buyer something to verify before they buy.";
+
+/** Non-negotiable. Numbered product principles do not override this. */
+export const PLATFORM_RULE_FOUNDER_OWNERSHIP = {
+  id: 1,
+  title: "Founder ownership",
+  nonNegotiable: true,
+  optional: true,
+  blocksDiy: false,
+  text: "Everything in Token Manager is optional. Guidance never blocks a do-it-yourself launch. Wallets, GitHub repositories, domains, and X accounts stay under the founder's own accounts. If the founder leaves Token Manager tomorrow, the coin, the repo, the domain, and the X account keep working. Token Manager is not the source of truth for those accounts.",
+} as const;

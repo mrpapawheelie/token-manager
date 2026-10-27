@@ -290,6 +290,42 @@ export const TOOL_CATALOG = [
     next: "Ship the week's check in public. Do not invent a perk.",
   },
   {
+    name: "claims_intake",
+    title: "Claim and use-case intake",
+    stage: "design_listing_meta",
+    implemented: true,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "Record the use case and product goal before launch copy. Optional. It does not block a do-it-yourself launch.",
+    next: "Compare wording locally with originality_compare. An empty list stays unchecked.",
+  },
+  {
+    name: "originality_compare",
+    title: "Local similar-project check",
+    stage: "design_listing_meta",
+    implemented: true,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "Compare a claim with projects the caller already listed. Does not search the web. Never marks the name unique. Empty input stays unchecked.",
+    next: "Read originality_coach for how a LARP-style scanner looks at claims versus contracts.",
+  },
+  {
+    name: "originality_coach",
+    title: "Positioning coach",
+    stage: "design_listing_meta",
+    implemented: true,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "Coach a specific use case so claim and copycat risk is easier to score. Contract checks stay the easy part. Guidance does not block DIY.",
+    next: "Keep the repo on the founder's GitHub account. github_repo_plan refuses a platform org.",
+  },
+  {
     name: "launch_curve_quote_dev_buy",
     title: "Quote the dev buy",
     stage: "bonding_curve_launch",
@@ -347,7 +383,31 @@ export const TOOL_CATALOG = [
     writesSession: true,
     description:
       "Validate and store a creation event on the local session. This is not the hosted platform directory.",
-    next: "Publish the same fields on the project site, including lock proofs.",
+    next: "Publish the same fields on the project site, including lock proofs. scanner_notify is an optional placeholder and does not call a webhook.",
+  },
+  {
+    name: "scanner_preview",
+    title: "Preview a scanner payload",
+    stage: "log_creation_event",
+    implemented: true,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "Build a ScannerTokenPayload. Missing checks stay unverified, false, or null. mock must be set by the caller. live is false in Phase 1.",
+    next: "The public fixture route is GET /api/scanner/tokens. It copies mock rows and does not query chain or OAuth.",
+  },
+  {
+    name: "scanner_notify",
+    title: "Auto-scan notification hook",
+    stage: "log_creation_event",
+    implemented: false,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "Stub. Optional webhook placeholder after a creation event. Phase 1 does not enqueue and does not call the URL.",
+    next: "directory_log_create already returns the same placeholder. The project still works if this hook is never configured.",
   },
   {
     name: "graduate_checklist",
@@ -551,6 +611,30 @@ export const TOOL_CATALOG = [
     description:
       "Stub. Records the intended public link between an account label and a contract. No network call.",
     next: "Show the result on the directory row when a later phase can verify it.",
+  },
+  {
+    name: "github_oauth_begin",
+    title: "GitHub OAuth to the founder",
+    stage: "oauth_verify",
+    implemented: false,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "Stub. Future OAuth targets the founder's GitHub account. No token field. Repos are never created under a Token Manager org.",
+    next: "Plan the repo name with github_repo_plan. The founder keeps the repo if they leave.",
+  },
+  {
+    name: "github_repo_plan",
+    title: "Plan a founder-owned repo",
+    stage: "oauth_verify",
+    implemented: true,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "Name a create or manage action on the founder's GitHub login. Rejects a platform org. Does not call GitHub.",
+    next: "Connect later with github_oauth_begin. Phase 1 still does not redirect.",
   },
   {
     name: "identity_explain_methods",

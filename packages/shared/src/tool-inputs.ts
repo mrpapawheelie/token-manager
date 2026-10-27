@@ -2,7 +2,12 @@ import { z } from "zod";
 
 import type { ToolName } from "./catalog.js";
 import { CAVEMAN_TOPICS } from "./copy.js";
-import { brandAssetKindSchema, nameScoreInputSchema, targetMarketSchema } from "./naming.js";
+import {
+  brandAssetKindSchema,
+  nameScoreInputSchema,
+  targetMarketSchema,
+} from "./naming.js";
+import { claimFieldSchema } from "./scanner.js";
 import {
   acknowledgementsSchema,
   claimProofSchema,
@@ -11,12 +16,14 @@ import {
   guardianPolicySchema,
   journeyStageSchema,
   lockProofSchema,
+  lockTierSchema,
   meteoraPoolConfigSchema,
   profileSignalsSchema,
   publicAddressSchema,
   quoteSymbolSchema,
   socialLinksSchema,
   tokenDesignSchema,
+  verificationStatusSchema,
 } from "./schemas.js";
 
 const sessionIdSchema = z.string().min(1).max(80).optional();
@@ -426,6 +433,84 @@ export const yearLogInputSchema = z
   })
   .strict();
 
+export const claimsIntakeInputSchema = z
+  .object({
+    name: z.string().min(1).max(32),
+    useCase: z.string().min(1).max(400),
+    productGoal: z.string().min(1).max(400),
+    audience: z.string().min(1).max(160),
+  })
+  .strict();
+
+export const originalityCompareInputSchema = z
+  .object({
+    name: z.string().min(1).max(32),
+    statement: z.string().min(1).max(500),
+    corpus: z
+      .array(
+        z
+          .object({
+            name: z.string().min(1).max(80),
+            summary: z.string().min(1).max(400),
+          })
+          .strict(),
+      )
+      .max(20)
+      .default([]),
+  })
+  .strict();
+
+export const originalityCoachInputSchema = z
+  .object({
+    name: z.string().min(1).max(32),
+    useCase: z.string().min(1).max(400),
+  })
+  .strict();
+
+export const scannerPreviewInputSchema = z
+  .object({
+    id: z.string().min(1).max(80),
+    name: z.string().min(1).max(32),
+    symbol: z.string().min(1).max(10),
+    category: z.string().min(1).max(40),
+    shortDescription: z.string().min(1).max(280),
+    contract: publicAddressSchema.optional(),
+    mock: z.boolean(),
+    identityMode: z.enum(["public", "anonymous_verified"]).optional(),
+    connectedX: z.boolean().nullable().optional(),
+    connectedGithub: z.boolean().nullable().optional(),
+    verificationStatus: verificationStatusSchema.optional(),
+    lockTier: lockTierSchema.optional(),
+    lockAssessed: z.boolean().optional(),
+    autoCompound: z.boolean().nullable().optional(),
+    profileCompletion: z.number().int().min(0).max(100).nullable().optional(),
+    claims: z.array(claimFieldSchema).max(20).optional(),
+    x: z.string().max(80).nullable().optional(),
+    github: z.string().max(200).nullable().optional(),
+  })
+  .strict();
+
+export const scannerNotifyInputSchema = z
+  .object({
+    eventId: z.string().min(1).max(80),
+    webhookUrl: z.string().url().optional(),
+  })
+  .strict();
+
+export const githubOauthBeginInputSchema = z
+  .object({
+    founderLogin: z.string().min(1).max(39),
+  })
+  .strict();
+
+export const githubRepoPlanInputSchema = z
+  .object({
+    founderLogin: z.string().min(1).max(39),
+    repoName: z.string().min(1).max(100),
+    action: z.enum(["create", "manage"]),
+  })
+  .strict();
+
 export const toolInputSchemas = {
   get_progress: getProgressInputSchema,
   resume: resumeInputSchema,
@@ -450,11 +535,16 @@ export const toolInputSchemas = {
   brand_principles: emptyInputSchema,
   brand_generate: brandGenerateInputSchema,
   badge_milestones: emptyInputSchema,
+  claims_intake: claimsIntakeInputSchema,
+  originality_compare: originalityCompareInputSchema,
+  originality_coach: originalityCoachInputSchema,
   launch_curve_quote_dev_buy: devBuyInputSchema,
   launch_curve_build_announcement: announcementInputSchema,
   launch_curve_submit: launchSubmitInputSchema,
   directory_build_event: creationEventSchema,
   directory_log_create: directoryLogInputSchema,
+  scanner_preview: scannerPreviewInputSchema,
+  scanner_notify: scannerNotifyInputSchema,
   graduate_checklist: graduateChecklistInputSchema,
   graduate_submit: graduateSubmitInputSchema,
   meteora_preview_damm_v2: meteoraPreviewInputSchema,
@@ -472,6 +562,8 @@ export const toolInputSchemas = {
   oauth_connection_status: oauthStatusInputSchema,
   verify_connected_accounts: verifyAccountsInputSchema,
   verify_contract_link: verifyContractInputSchema,
+  github_oauth_begin: githubOauthBeginInputSchema,
+  github_repo_plan: githubRepoPlanInputSchema,
   identity_explain_methods: emptyInputSchema,
   identity_score_from_inputs: identityScoreInputSchema,
   identity_add_claim: identityClaimInputSchema,
