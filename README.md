@@ -37,6 +37,10 @@ The admin shell shows X followers, impressions, and engagements as **mock** char
 
 `claims_intake`, `originality_compare`, and `originality_coach` record a use case and compare it with a list the caller supplies. They do not search the web and they do not mark a name unique. Contract checks are the easy half of a LARP-style scan. Claim and copycat risk is the hard half.
 
+Token Manager helps the founder **market** the coin and **wire project data** to consumers and agents. Pre-launch (`prelaunch_checklist`) is free and happens before any mint or fee: publish the site, create X, publish the account, run a first AMA, and set a hype cadence. The founder site stack is Vercel, Next.js, TypeScript, shadcn/ui, and Zod. The contract address sits at the top of the template with one-click copy, or a placeholder before the mint.
+
+`api_builder_locate`, `api_builder_describe`, `api_builder_readonly`, `api_builder_token_gate`, and `api_builder_x402` describe that data API. Auth on `ApiEndpointSpec` is `none`, `token`, or `x402`. x402 is HTTP 402: another agent can micropay the **founder** to query. `X402Config` is a stub (`implemented: false`). The mock OpenAPI sample is `GET /v1/project/summary`. Phase 1 does not charge and does not serve those routes.
+
 The public scanner sketch is `GET /api/scanner/tokens` and `GET /api/scanner/tokens/{id}` on the web app, plus `GET /api/scanner/openapi`. Payloads use `ScannerTokenPayload` and `VerificationFlags`. Missing steps are `false`, `null`, or `"unverified"`. Phase 1 rows are `mock: true` and `live: false`. `directory_log_create` attaches a scan-notification placeholder and does not call a webhook. The fixture does not enforce a rate limit; a live deployment should cap anonymous reads at about 60 requests per minute per IP. See the docs page **Scanner API**.
 
 ## Per-project admin

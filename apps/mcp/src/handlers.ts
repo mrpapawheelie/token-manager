@@ -6,8 +6,15 @@ import {
   STAGE_LABELS,
   IDENTITY_SCORE_FORMULA,
   SITE_PAGES,
+  API_BUILDER_OPENAPI,
   adsPreview,
   amaPlan,
+  describeEndpoints,
+  locateProjectData,
+  prelaunchChecklist,
+  readonlyBalanceSpec,
+  tokenGatedSpec,
+  x402EndpointSpec,
   buildBadges,
   buildFairLaunchAnnouncement,
   cavemanScript,
@@ -190,6 +197,11 @@ const implementedHandlers: {
       nextTools: [...new Set([...toolsForStage(state.currentStage), ...ALWAYS_TOOLS])],
       state,
     });
+  },
+
+  async prelaunch_checklist(input) {
+    const args = toolInputSchemas.prelaunch_checklist.parse(input);
+    return ok("prelaunch_checklist", prelaunchChecklist(args));
   },
 
   async prep_x_checklist(input) {
@@ -567,6 +579,7 @@ const implementedHandlers: {
         { id: "x_analytics", status: "mock" },
         { id: "radar", status: "guide_only" },
         { id: "ads", status: "stub" },
+        { id: "api_builder", status: "spec_only" },
         { id: "meteora", status: "stub" },
       ],
     });
@@ -595,6 +608,36 @@ const implementedHandlers: {
   async ads_preview(input) {
     const args = toolInputSchemas.ads_preview.parse(input);
     return ok("ads_preview", { lines: adsPreview(args) });
+  },
+
+  async api_builder_locate(input) {
+    const args = toolInputSchemas.api_builder_locate.parse(input);
+    return ok("api_builder_locate", locateProjectData(args.source));
+  },
+
+  async api_builder_describe(input) {
+    const args = toolInputSchemas.api_builder_describe.parse(input);
+    return ok("api_builder_describe", describeEndpoints(args.wish));
+  },
+
+  async api_builder_readonly() {
+    return ok("api_builder_readonly", {
+      endpoint: readonlyBalanceSpec(),
+      balance: null,
+      network: false,
+    });
+  },
+
+  async api_builder_token_gate(input) {
+    const args = toolInputSchemas.api_builder_token_gate.parse(input);
+    return ok("api_builder_token_gate", { endpoint: tokenGatedSpec(args.enabled) });
+  },
+
+  async api_builder_x402() {
+    return ok("api_builder_x402", {
+      ...x402EndpointSpec(),
+      openapi: API_BUILDER_OPENAPI,
+    });
   },
 
   async ops_year_checklist(input) {

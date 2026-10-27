@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CONTRACT_ADDRESS_PLACEHOLDER } from "@token-manager/shared";
 
 import { BadgeList } from "@/components/badges";
+import { ContractAddress } from "@/components/contract-address";
 import { IdentityScorePanel } from "@/components/identity-score";
 import { getProject } from "@/lib/mock-events";
 
@@ -25,6 +27,10 @@ export default async function TokenPage({ params }: PageProps) {
 
   return (
     <div className="space-y-8">
+      <ContractAddress
+        address={event.contract}
+        placeholder={CONTRACT_ADDRESS_PLACEHOLDER}
+      />
       <div className="space-y-2">
         <p className="text-sm text-stone-500">
           <Link href="/" className="underline">

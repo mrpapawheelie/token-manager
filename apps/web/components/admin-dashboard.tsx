@@ -151,6 +151,24 @@ export function AdminDashboard({ project }: { project: DirectoryProject }) {
         </p>
       </section>
 
+      <section className="space-y-2">
+        <h2 className="text-lg font-semibold">API builder</h2>
+        <p className="text-sm text-stone-600">
+          Wire project data to people and to other agents. Phase 1 only writes the spec.
+          It does not read a balance and it does not collect a payment.
+        </p>
+        <ul className="list-disc pl-5 text-sm text-stone-600">
+          <li>Where is the data? Unknown stays unknown.</li>
+          <li>If it is nowhere, describe the endpoints. No model is called.</li>
+          <li>Balance and address checks are read-only.</li>
+          <li>A token gate is optional and off until you ask.</li>
+          <li>
+            x402 is HTTP 402. Another agent can micropay the founder to query. This shell
+            does not charge.
+          </li>
+        </ul>
+      </section>
+
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Meteora liquidity</h2>
         <fieldset className="space-y-2 text-sm">

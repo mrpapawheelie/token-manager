@@ -16,18 +16,25 @@ import {
   createProgressState,
   lockProofSchema,
   meteoraPoolConfigSchema,
+  API_BUILDER_OPENAPI,
+  CONTRACT_ADDRESS_PLACEHOLDER,
   PLATFORM_RULE_FOUNDER_OWNERSHIP,
+  SITE_TEMPLATE_STACK,
   SCANNER_OPENAPI,
   SCANNER_RATE_LIMIT,
   TOKEN_CREATION_FEE,
   WEEKLY_MILESTONES,
   brandAssetBrief,
   buildScannerToken,
+  describeEndpoints,
+  locateProjectData,
   compareOriginality,
   mockXAnalytics,
   placeholderScanNotification,
+  prelaunchChecklist,
   planDomain,
   planFounderGithubRepo,
+  x402EndpointSpec,
   quoteDevBuy,
   quoteTokenPrice,
   radarGuide,
@@ -375,6 +382,42 @@ describe("founder ownership and scanner flags", () => {
   });
 });
 
+describe("prelaunch and api builder", () => {
+  it("keeps pre-launch free and before a mint", () => {
+    const plan = prelaunchChecklist({ publish_site: true });
+    assert.equal(plan.fee, "free");
+    assert.equal(plan.mint, false);
+    assert.equal(plan.blocksLaunch, false);
+    assert.deepEqual(
+      plan.steps.map((step) => step.id),
+      ["publish_site", "create_x", "publish_account", "first_ama", "hype_cadence"],
+    );
+    assert.equal(plan.steps[0]?.done, true);
+    assert.equal(plan.steps[1]?.done, false);
+    assert.equal(SITE_TEMPLATE_STACK.ui, "shadcn/ui");
+    assert.equal(SITE_TEMPLATE_STACK.forms, "zod");
+    assert.match(CONTRACT_ADDRESS_PLACEHOLDER, /publishes at launch/);
+  });
+
+  it("does not invent data, a balance, or an x402 charge", () => {
+    const missing = locateProjectData("none");
+    assert.equal(missing.found, false);
+    assert.equal(missing.live, false);
+    assert.deepEqual(describeEndpoints("").endpoints, []);
+    const payable = x402EndpointSpec();
+    assert.equal(payable.endpoint.auth, "x402");
+    assert.equal(payable.endpoint.live, false);
+    assert.equal(payable.x402.httpStatus, 402);
+    assert.equal(payable.x402.implemented, false);
+    assert.equal(payable.x402.payTo, "founder");
+    assert.equal(payable.x402.platformReceivesFunds, false);
+    assert.match(
+      API_BUILDER_OPENAPI.paths["/v1/project/summary"].get.responses["402"].description,
+      /Payment Required/,
+    );
+  });
+});
+
 describe("redaction and readme", () => {
   it("redacts secret keys and long base58 strings", () => {
     const secret = "5".repeat(88);
@@ -419,6 +462,8 @@ describe("redaction and readme", () => {
       "founder ownership",
       "leaves Token Manager",
       "unverified",
+      "wire project data",
+      "x402",
     ]) {
       assert.equal(readme.includes(phrase), true, phrase);
     }

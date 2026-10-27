@@ -7,6 +7,7 @@ import {
   nameScoreInputSchema,
   targetMarketSchema,
 } from "./naming.js";
+import { dataLocationSchema } from "./api-builder.js";
 import { claimFieldSchema } from "./scanner.js";
 import {
   acknowledgementsSchema,
@@ -511,9 +512,42 @@ export const githubRepoPlanInputSchema = z
   })
   .strict();
 
+export const prelaunchChecklistInputSchema = z
+  .object({
+    publish_site: z.boolean().optional(),
+    create_x: z.boolean().optional(),
+    publish_account: z.boolean().optional(),
+    first_ama: z.boolean().optional(),
+    hype_cadence: z.boolean().optional(),
+  })
+  .strict();
+
+export const apiBuilderLocateInputSchema = z
+  .object({
+    source: dataLocationSchema,
+  })
+  .strict();
+
+export const apiBuilderDescribeInputSchema = z
+  .object({
+    wish: z.string().max(2000).default(""),
+  })
+  .strict();
+
+export const apiBuilderReadonlyInputSchema = z.object({}).strict();
+
+export const apiBuilderTokenGateInputSchema = z
+  .object({
+    enabled: z.boolean().default(false),
+  })
+  .strict();
+
+export const apiBuilderX402InputSchema = z.object({}).strict();
+
 export const toolInputSchemas = {
   get_progress: getProgressInputSchema,
   resume: resumeInputSchema,
+  prelaunch_checklist: prelaunchChecklistInputSchema,
   prep_x_checklist: prepXChecklistInputSchema,
   prep_x_schedule: prepXScheduleInputSchema,
   name_intake: targetMarketSchema,
@@ -583,6 +617,11 @@ export const toolInputSchemas = {
   grow_x_dev_api_checklist: devApiInputSchema,
   ads_preview: adsPreviewInputSchema,
   ads_submit: boostInputSchema,
+  api_builder_locate: apiBuilderLocateInputSchema,
+  api_builder_describe: apiBuilderDescribeInputSchema,
+  api_builder_readonly: apiBuilderReadonlyInputSchema,
+  api_builder_token_gate: apiBuilderTokenGateInputSchema,
+  api_builder_x402: apiBuilderX402InputSchema,
   ops_year_checklist: yearChecklistInputSchema,
   ops_year_log_week: yearLogInputSchema,
 } as const satisfies Record<ToolName, z.ZodTypeAny>;

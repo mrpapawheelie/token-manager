@@ -21,6 +21,10 @@ export default function HomePage() {
           <a className="underline" href="/api/scanner/openapi">
             OpenAPI sketch
           </a>
+          {" · "}
+          <a className="underline" href="/template">
+            Pre-mint site template
+          </a>
         </p>
       </div>
       <Directory projects={mockProjects} />
