@@ -22,6 +22,9 @@ export function toScannerToken(project: DirectoryProject): ScannerTokenPayload {
     createdAt: project.event.createdAt,
     launchAt: project.event.launchAt,
     mock: true,
+    actor: project.event.actor,
+    feePolicy: project.feePolicy,
+    finalized: project.lock.finalized,
     identityMode: identity?.mode ?? null,
     socials: {
       x: project.event.socials.x ?? null,

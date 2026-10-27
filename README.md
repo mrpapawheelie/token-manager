@@ -47,6 +47,20 @@ Token Manager helps the founder **market** the coin and **wire project data** to
 
 The public scanner sketch is `GET /api/scanner/tokens` and `GET /api/scanner/tokens/{id}` on the web app, plus `GET /api/scanner/openapi`. Payloads use `ScannerTokenPayload` and `VerificationFlags`. Missing steps are `false`, `null`, or `"unverified"`. Phase 1 rows are `mock: true` and `live: false`. `directory_log_create` attaches a scan-notification placeholder and does not call a webhook. The fixture does not enforce a rate limit; a live deployment should cap anonymous reads at about 60 requests per minute per IP. See the docs page **Scanner API**.
 
+## Web or MCP
+
+Founders can run the journey on the **web or MCP**. Both surfaces read the same stage ids from `packages/shared`. `JOURNEY_SYNC` records that shared order. Phase 1 does not copy the JSON session between them. The stub session id is `stub-shared-session` (`liveSync` is false). `get_progress` returns that note. The directory shell is mobile-friendly on the shadcn breakpoint scale: cards below `lg`, a table from there up.
+
+An agent may call MCP to create or set up a project. Those tools require `actorType`: `human` or `agent` (`ActorType`). The creation event stores `CreationActorMeta` with `actor_type`. When `actor_type` is `agent`, `agent_created` and `no_human` are both true. A human create sets both to false. An agent-created project must be labeled for buyers and scanners: the directory badge, the creation event, and the scanner JSON all carry those flags.
+
+`FeePolicy` is `earmarked`, `dao_governed`, or `human_withdrawable`. `human_withdrawable` is only for human-created projects and is discouraged. An agent create cannot select it. `fee_policy_choose` records the path locally and does not move funds. `governance_dao_playbook` is a pointer for DAO vote setup. It does not open a vote.
+
+`PostCreateLock`: after an agent finalize, mint, LP, and fee admin are immutable and non-retcon. Humans cannot change those via platform admin for an agent-created project. `governance_finalize_lock` returns that record. Phase 1 does not write it on chain.
+
+Teaser: Give the agent the MCP. It creates and sets up the project, then notifies the human. Phase 1 does not send the transaction or the notice.
+
+The docs page **Governance** is the function map. OpenAPI files in this repo are sketches and not a live API (`live` is false). The security disclaimer is that Token Manager is not a security audit and does not custody funds. The third-party audit slot is empty (`auditor` null, `completed` false) until a named firm fills it. Credibility is a WYSIWYG listing: the directory shows recorded checks and agent labels, and it does not invent a rank. The repo stays clonable. A founder can copy it and leave.
+
 ## Per-project admin
 
 Each project site has an admin shell (see `/tokens/[id]/admin` on the web app).

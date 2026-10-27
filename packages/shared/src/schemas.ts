@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { creationActorMetaSchema } from "./actor.js";
+import { feePolicySchema, governanceIssues, postCreateLockSchema } from "./governance.js";
 import { METEORA_COMPOUNDING_FEE_BPS } from "./principles.js";
 import { JOURNEY_STAGES } from "./stages.js";
 
@@ -193,8 +195,22 @@ export const creationEventSchema = z
     launchAt: z.string().datetime(),
     dumpHonestyAcknowledged: z.literal(true),
     launchStyle: z.literal("bonding_curve"),
+    actor: creationActorMetaSchema,
+    feePolicy: feePolicySchema,
+    postCreateLock: postCreateLockSchema,
   })
-  .strict();
+  .strict()
+  .superRefine((value, ctx) => {
+    for (const message of governanceIssues({
+      actor_type: value.actor.actor_type,
+      agent_created: value.actor.agent_created,
+      no_human: value.actor.no_human,
+      feePolicy: value.feePolicy,
+      postCreateLock: value.postCreateLock,
+    })) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message });
+    }
+  });
 
 export type CreationEvent = z.infer<typeof creationEventSchema>;
 

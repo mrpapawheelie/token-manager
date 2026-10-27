@@ -5,6 +5,36 @@
  */
 
 export {
+  AGENT_TEASER,
+  AUDIT_SLOT,
+  CREDIBILITY,
+  FEE_POLICY_NOTES,
+  FUNCTION_MAP,
+  GOVERNANCE_OPENAPI,
+  SECURITY_DISCLAIMER,
+  chooseFeePolicy,
+  daoPlaybook,
+  feePolicyChoiceSchema,
+  feePolicySchema,
+  governanceIssues,
+  postCreateLock,
+  postCreateLockSchema,
+  type FeePolicy,
+  type PostCreateLock,
+} from "./governance.js";
+
+export {
+  JOURNEY_SYNC,
+  actorTypeSchema,
+  creationActorMeta,
+  creationActorMetaSchema,
+  surfaceSchema,
+  type ActorType,
+  type CreationActorMeta,
+  type Surface,
+} from "./actor.js";
+
+export {
   ALWAYS_TOOLS,
   TOOL_CATALOG,
   toolByName,

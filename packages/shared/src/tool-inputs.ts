@@ -7,6 +7,8 @@ import {
   nameScoreInputSchema,
   targetMarketSchema,
 } from "./naming.js";
+import { actorTypeSchema, surfaceSchema } from "./actor.js";
+import { feePolicyChoiceSchema, feePolicySchema } from "./governance.js";
 import { dataLocationSchema } from "./api-builder.js";
 import { membershipSourceSchema } from "./credentials.js";
 import { claimFieldSchema } from "./scanner.js";
@@ -100,6 +102,8 @@ export const setupEnvironmentInputSchema = z
     rpcUrl: z.string().url().optional(),
     walletAddress: publicAddressSchema.optional(),
     codexActivationPaid: z.boolean().optional(),
+    actorType: actorTypeSchema,
+    surface: surfaceSchema.default("mcp"),
   })
   .strict();
 
@@ -139,6 +143,8 @@ export const launchSubmitInputSchema = z
   .object({
     ...confirmFields,
     design: tokenDesignSchema,
+    actorType: actorTypeSchema,
+    surface: surfaceSchema.default("mcp"),
   })
   .strict();
 
@@ -478,6 +484,11 @@ export const scannerPreviewInputSchema = z
     shortDescription: z.string().min(1).max(280),
     contract: publicAddressSchema.optional(),
     mock: z.boolean(),
+    actorType: actorTypeSchema,
+    surface: surfaceSchema.default("mcp"),
+    sessionId: z.string().min(1).max(80).optional(),
+    feePolicy: feePolicySchema.optional(),
+    finalized: z.boolean().optional(),
     identityMode: z.enum(["public", "anonymous_verified"]).optional(),
     connectedX: z.boolean().nullable().optional(),
     connectedGithub: z.boolean().nullable().optional(),
@@ -619,6 +630,19 @@ export const kycBadgesInputSchema = z
   })
   .strict();
 
+export const governancePlaybookInputSchema = z
+  .object({
+    actorType: actorTypeSchema,
+  })
+  .strict();
+
+export const governanceFinalizeInputSchema = z
+  .object({
+    actorType: actorTypeSchema,
+    finalized: z.boolean(),
+  })
+  .strict();
+
 export const kycEmailProofInputSchema = z
   .object({
     registrationEmail: emailField.optional(),
@@ -719,6 +743,10 @@ export const toolInputSchemas = {
   api_builder_readonly: apiBuilderReadonlyInputSchema,
   api_builder_token_gate: apiBuilderTokenGateInputSchema,
   api_builder_x402: apiBuilderX402InputSchema,
+  fee_policy_list: emptyInputSchema,
+  fee_policy_choose: feePolicyChoiceSchema,
+  governance_dao_playbook: governancePlaybookInputSchema,
+  governance_finalize_lock: governanceFinalizeInputSchema,
   ops_year_checklist: yearChecklistInputSchema,
   ops_year_log_week: yearLogInputSchema,
 } as const satisfies Record<ToolName, z.ZodTypeAny>;

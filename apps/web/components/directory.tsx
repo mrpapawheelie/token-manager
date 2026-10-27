@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 
 import type { DirectoryProject } from "@/lib/mock-events";
 
+import { ActorBadge } from "./actor-badge";
 import { BadgeList } from "./badges";
 import { TagList } from "./tag-list";
 
@@ -16,7 +17,16 @@ const VERIFICATION = [
   "anonymous_verified",
 ] as const;
 
-export function Directory({ projects }: { projects: DirectoryProject[] }) {
+const fieldClass =
+  "min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-base sm:text-sm";
+
+export function Directory({
+  projects,
+  sessionId,
+}: {
+  projects: DirectoryProject[];
+  sessionId: string;
+}) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [verification, setVerification] = useState<(typeof VERIFICATION)[number]>("all");
@@ -45,6 +55,9 @@ export function Directory({ projects }: { projects: DirectoryProject[] }) {
 
   return (
     <div className="space-y-4">
+      <p className="text-sm text-stone-600">
+        Shared journey session {sessionId}. Live sync with MCP is off.
+      </p>
       <form
         className="grid gap-3 sm:grid-cols-3"
         onSubmit={(event) => event.preventDefault()}
@@ -55,7 +68,7 @@ export function Directory({ projects }: { projects: DirectoryProject[] }) {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Name, symbol, or contract"
-            className="w-full rounded-md border border-stone-300 bg-white px-3 py-2"
+            className={fieldClass}
           />
         </label>
         <label className="space-y-1 text-sm">
@@ -63,7 +76,7 @@ export function Directory({ projects }: { projects: DirectoryProject[] }) {
           <select
             value={category}
             onChange={(event) => setCategory(event.target.value)}
-            className="w-full rounded-md border border-stone-300 bg-white px-3 py-2"
+            className={fieldClass}
           >
             <option value="all">All categories</option>
             {categories.map((item) => (
@@ -80,7 +93,7 @@ export function Directory({ projects }: { projects: DirectoryProject[] }) {
             onChange={(event) =>
               setVerification(event.target.value as (typeof VERIFICATION)[number])
             }
-            className="w-full rounded-md border border-stone-300 bg-white px-3 py-2"
+            className={fieldClass}
           >
             {VERIFICATION.map((item) => (
               <option key={item} value={item}>
@@ -100,75 +113,132 @@ export function Directory({ projects }: { projects: DirectoryProject[] }) {
           No mock creations match these filters.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-stone-200 bg-white">
-          <table className="min-w-[64rem] w-full text-left text-sm">
-            <thead className="bg-stone-100 text-stone-600">
-              <tr>
-                <th className="px-3 py-2 font-medium" scope="col">
-                  Token
-                </th>
-                <th className="px-3 py-2 font-medium" scope="col">
-                  Category
-                </th>
-                <th className="px-3 py-2 font-medium" scope="col">
-                  Verification
-                </th>
-                <th className="px-3 py-2 font-medium" scope="col">
-                  Identity
-                </th>
-                <th className="px-3 py-2 font-medium" scope="col">
-                  Profile
-                </th>
-                <th className="px-3 py-2 font-medium" scope="col">
-                  Labels
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((project) => (
-                <tr
-                  key={project.event.id}
-                  className="border-t border-stone-200 align-top"
-                >
-                  <td className="px-3 py-3">
-                    <Link
-                      href={`/tokens/${project.event.id}`}
-                      className="font-semibold text-stone-900 underline-offset-2 hover:underline"
-                    >
-                      {project.event.name}
-                    </Link>
-                    <p className="text-stone-500">{project.event.symbol}</p>
-                    <p className="mt-1 max-w-sm text-stone-700">
-                      {project.event.shortDescription}
-                    </p>
-                  </td>
-                  <td className="px-3 py-3">{project.event.category}</td>
-                  <td className="px-3 py-3">
-                    {project.event.verification.status.replaceAll("_", " ")}
-                  </td>
-                  <td className="px-3 py-3">
-                    {project.event.identity
-                      ? `${project.event.identity.total} / 100`
-                      : "No score"}
-                    <p className="text-stone-500">
-                      {project.event.identity?.mode === "anonymous_verified"
-                        ? "Anonymous, verified"
-                        : "Public"}
-                    </p>
-                  </td>
-                  <td className="px-3 py-3">{project.completion.percent}% complete</td>
-                  <td className="px-3 py-3">
-                    <BadgeList badges={project.badges} />
-                    <div className="mt-2">
-                      <TagList tags={project.tags} />
-                    </div>
-                  </td>
+        <>
+          <ul className="space-y-3 lg:hidden">
+            {filtered.map((project) => (
+              <li
+                key={project.event.id}
+                className="rounded-lg border border-stone-200 bg-white p-4"
+              >
+                <ProjectHeading project={project} />
+                <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                  <Fact label="Category" value={project.event.category} />
+                  <Fact
+                    label="Verification"
+                    value={project.event.verification.status.replaceAll("_", " ")}
+                  />
+                  <Fact
+                    label="Identity"
+                    value={
+                      project.event.identity
+                        ? `${project.event.identity.total} / 100`
+                        : "No score"
+                    }
+                  />
+                  <Fact
+                    label="Profile"
+                    value={`${project.completion.percent}% complete`}
+                  />
+                </dl>
+                <div className="mt-3">
+                  <BadgeList badges={project.badges} />
+                  <div className="mt-2">
+                    <TagList tags={project.tags} />
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className="hidden overflow-x-auto rounded-lg border border-stone-200 bg-white lg:block">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-stone-100 text-stone-600">
+                <tr>
+                  <th className="px-3 py-2 font-medium" scope="col">
+                    Token
+                  </th>
+                  <th className="px-3 py-2 font-medium" scope="col">
+                    Category
+                  </th>
+                  <th className="px-3 py-2 font-medium" scope="col">
+                    Verification
+                  </th>
+                  <th className="px-3 py-2 font-medium" scope="col">
+                    Identity
+                  </th>
+                  <th className="px-3 py-2 font-medium" scope="col">
+                    Profile
+                  </th>
+                  <th className="px-3 py-2 font-medium" scope="col">
+                    Labels
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {filtered.map((project) => (
+                  <tr
+                    key={project.event.id}
+                    className="border-t border-stone-200 align-top"
+                  >
+                    <td className="px-3 py-3">
+                      <ProjectHeading project={project} />
+                    </td>
+                    <td className="px-3 py-3">{project.event.category}</td>
+                    <td className="px-3 py-3">
+                      {project.event.verification.status.replaceAll("_", " ")}
+                    </td>
+                    <td className="px-3 py-3">
+                      {project.event.identity
+                        ? `${project.event.identity.total} / 100`
+                        : "No score"}
+                      <p className="text-stone-500">
+                        {project.event.identity?.mode === "anonymous_verified"
+                          ? "Anonymous, verified"
+                          : "Public"}
+                      </p>
+                    </td>
+                    <td className="px-3 py-3">{project.completion.percent}% complete</td>
+                    <td className="px-3 py-3">
+                      <BadgeList badges={project.badges} />
+                      <div className="mt-2">
+                        <TagList tags={project.tags} />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
+    </div>
+  );
+}
+
+function ProjectHeading({ project }: { project: DirectoryProject }) {
+  return (
+    <>
+      <Link
+        href={`/tokens/${project.event.id}`}
+        className="font-semibold text-stone-900 underline-offset-2 hover:underline"
+      >
+        {project.event.name}
+      </Link>
+      <p className="text-stone-500">{project.event.symbol}</p>
+      <ActorBadge
+        actor={project.event.actor}
+        feePolicy={project.feePolicy}
+        lock={project.lock}
+      />
+      <p className="mt-1 max-w-sm text-stone-700">{project.event.shortDescription}</p>
+    </>
+  );
+}
+
+function Fact({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-stone-500">{label}</dt>
+      <dd>{value}</dd>
     </div>
   );
 }

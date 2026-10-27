@@ -1,9 +1,11 @@
 import {
   IDENTITY_METHODS,
   buildBadges,
+  creationActorMeta,
   credentialTags,
   creationEventSchema,
   guardianPolicySchema,
+  postCreateLock,
   reviewXHeuristics,
   scoreIdentity,
   scoreProfile,
@@ -12,8 +14,10 @@ import {
   type CoAdmin,
   type CreationEvent,
   type CredentialTag,
+  type FeePolicy,
   type GuardianPolicy,
   type LockTier,
+  type PostCreateLock,
   type ProfileCompletionScore,
   type ProfileSignals,
 } from "@token-manager/shared";
@@ -35,6 +39,8 @@ export interface DirectoryProject {
   badges: BadgeDefinition[];
   tags: CredentialTag[];
   privateFlags: AdminFlagQueueItem[];
+  feePolicy: FeePolicy;
+  lock: PostCreateLock;
   completion: ProfileCompletionScore;
   admin: {
     creatorWallet: string;
@@ -57,6 +63,9 @@ function project(input: {
   signals: ProfileSignals;
   lockTier: LockTier;
   locks: CreationEvent["locks"];
+  actorType: "human" | "agent";
+  feePolicy: FeePolicy;
+  finalized: boolean;
   tags: CredentialTag[];
   privateFlags: AdminFlagQueueItem[];
   socials: CreationEvent["socials"];
@@ -85,6 +94,12 @@ function project(input: {
     launchAt: input.launchAt,
     dumpHonestyAcknowledged: true,
     launchStyle: "bonding_curve",
+    actor: creationActorMeta({ actorType: input.actorType, surface: "web" }),
+    feePolicy: input.feePolicy,
+    postCreateLock: postCreateLock({
+      actorType: input.actorType,
+      finalized: input.finalized,
+    }),
   });
   const guardian = guardianPolicySchema.parse({
     projectId: input.id,
@@ -104,6 +119,8 @@ function project(input: {
     badges,
     tags: input.tags,
     privateFlags: input.privateFlags,
+    feePolicy: input.feePolicy,
+    lock: event.postCreateLock,
     completion,
     admin: { creatorWallet, coAdmins: input.coAdmins, guardian },
   };
@@ -164,6 +181,9 @@ export const mockProjects: DirectoryProject[] = [
     signals: northSignals,
     lockTier: "none",
     locks: [],
+    actorType: "human",
+    feePolicy: "earmarked",
+    finalized: false,
     tags: credentialTags({ eth_aligned_contrib: true }),
     privateFlags: [],
     socials: {
@@ -201,7 +221,7 @@ export const mockProjects: DirectoryProject[] = [
     symbol: "QUEUE",
     category: "community",
     description:
-      "Mostly grey labels. A partial LP lock is the one colored liquidity check.",
+      "Agent-created sample. Mostly grey labels, with a partial LP lock and a non-retcon fee admin.",
     contractPrefix: "Queue",
     creatorPrefix: "RootB",
     launchAt: "2026-11-20T16:00:00.000Z",
@@ -219,6 +239,9 @@ export const mockProjects: DirectoryProject[] = [
         quoteSymbol: "SOL",
       },
     ],
+    actorType: "agent",
+    feePolicy: "dao_governed",
+    finalized: true,
     tags: credentialTags({ new_x_account: true, thin_history: true }),
     privateFlags: reviewXHeuristics({
       subjectLabel: "queue-note",
@@ -264,6 +287,9 @@ export const mockProjects: DirectoryProject[] = [
         proofUri: "https://example.com/forge-lock/team",
       },
     ],
+    actorType: "human",
+    feePolicy: "human_withdrawable",
+    finalized: false,
     tags: credentialTags({
       gitcoin_passport: true,
       build_guild: true,

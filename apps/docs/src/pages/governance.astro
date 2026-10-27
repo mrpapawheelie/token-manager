@@ -1,0 +1,95 @@
+---
+import DocLayout from "../layouts/DocLayout.astro";
+import {
+  AGENT_TEASER,
+  AUDIT_SLOT,
+  CREDIBILITY,
+  FEE_POLICY_NOTES,
+  FUNCTION_MAP,
+  GOVERNANCE_OPENAPI,
+  SECURITY_DISCLAIMER,
+} from "@token-manager/shared";
+---
+
+<DocLayout title="Governance">
+  <h1>Governance and agent creates</h1>
+  <p>
+    Founders can run the journey on the web or MCP. Both surfaces share stage ids.
+    The stub session id is <code>stub-shared-session</code>. Live sync is off in Phase 1.
+  </p>
+  <p>{AGENT_TEASER}</p>
+  <p>
+    An agent create sets <code>agent_created</code> and <code>no_human</code> on
+    <code>CreationActorMeta</code> (<code>actor_type</code> is <code>human</code> or
+    <code>agent</code>). Buyers and scanners should read those flags. A human create sets
+    both to false.
+  </p>
+
+  <h2>Fee policy</h2>
+  <ul>
+    {
+      FEE_POLICY_NOTES.map((item) => (
+        <li>
+          <code>{item.id}</code> — {item.note}
+          {item.discouraged ? " Discouraged." : ""}
+        </li>
+      ))
+    }
+  </ul>
+  <p>
+    <code>fee_policy_list</code> and <code>fee_policy_choose</code> record the path locally.
+    They do not move funds. <code>governance_dao_playbook</code> is a pointer for DAO vote
+    setup. It does not open a vote or notify the human.
+  </p>
+
+  <h2>Post-create lock</h2>
+  <p>
+    After an agent finalize, <code>PostCreateLock</code> marks mint, LP, and fee admin
+    immutable and non-retcon. Humans cannot change those via platform admin for an
+    agent-created project. <code>governance_finalize_lock</code> returns that record.
+    Phase 1 does not write it on chain.
+  </p>
+
+  <h2>Function map</h2>
+  <p>
+    OpenAPI files in this repo are sketches. <code>live</code> is false. A sketch is not a
+    live API. <code>GOVERNANCE_OPENAPI</code> serves no path (
+    {GOVERNANCE_OPENAPI.info.description}).
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Function</th>
+        <th>Surface</th>
+        <th>Served</th>
+        <th>Live</th>
+        <th>What it is</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        FUNCTION_MAP.map((row) => (
+          <tr>
+            <td>
+              <code>{row.id}</code>
+            </td>
+            <td>{row.surface}</td>
+            <td>{row.served ? "yes" : "no"}</td>
+            <td>{row.live ? "yes" : "no"}</td>
+            <td>{row.summary}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+
+  <h2>Security disclaimer</h2>
+  <p>{SECURITY_DISCLAIMER}</p>
+  <p>
+    Third-party audit slot: auditor is {AUDIT_SLOT.auditor === null ? "empty" : AUDIT_SLOT.auditor},
+    completed is {String(AUDIT_SLOT.completed)}. {AUDIT_SLOT.note}
+  </p>
+
+  <h2>Credibility</h2>
+  <p>{CREDIBILITY.note}</p>
+</DocLayout>

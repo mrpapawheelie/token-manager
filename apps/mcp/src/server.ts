@@ -67,4 +67,5 @@ const phase1Instructions = [
   "Sniper and bundler bots are out of scope.",
   "Founder ownership is non-negotiable: wallets, GitHub repos, domains, and X stay on the founder's accounts. Guidance never blocks DIY.",
   "Scanner flags stay unverified, false, or null when a check was not made. Do not invent a pass.",
+  "Agent creates set agent_created and no_human. human_withdrawable is only for a human create. After an agent finalize, mint, LP, and fee admin are immutable and non-retcon.",
 ].join(" ");

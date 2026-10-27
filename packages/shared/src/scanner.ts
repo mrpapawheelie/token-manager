@@ -1,5 +1,14 @@
 import { z } from "zod";
 
+import type { CreationActorMeta } from "./actor.js";
+import { creationActorMetaSchema } from "./actor.js";
+import {
+  feePolicySchema,
+  governanceIssues,
+  postCreateLock,
+  postCreateLockSchema,
+  type FeePolicy,
+} from "./governance.js";
 import type { LockTier, VerificationStatus } from "./schemas.js";
 
 /**
@@ -58,6 +67,9 @@ export const scannerTokenPayloadSchema = z
     founderOwned: z.literal(true),
     optional: z.literal(true),
     blocksDiy: z.literal(false),
+    actor: creationActorMetaSchema,
+    feePolicy: feePolicySchema,
+    postCreateLock: postCreateLockSchema,
     identityMode: z.enum(["public", "anonymous_verified"]).nullable(),
     socials: z
       .object({
@@ -69,7 +81,18 @@ export const scannerTokenPayloadSchema = z
       .strict(),
     verification: verificationFlagsSchema,
   })
-  .strict();
+  .strict()
+  .superRefine((value, ctx) => {
+    for (const message of governanceIssues({
+      actor_type: value.actor.actor_type,
+      agent_created: value.actor.agent_created,
+      no_human: value.actor.no_human,
+      feePolicy: value.feePolicy,
+      postCreateLock: value.postCreateLock,
+    })) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message });
+    }
+  });
 
 export type ScannerTokenPayload = z.infer<typeof scannerTokenPayloadSchema>;
 
@@ -142,6 +165,9 @@ export function buildScannerToken(input: {
   createdAt?: string | null;
   launchAt?: string | null;
   mock: boolean;
+  actor: CreationActorMeta;
+  feePolicy: FeePolicy;
+  finalized: boolean;
   identityMode?: "public" | "anonymous_verified" | null;
   socials?: {
     x?: string | null;
@@ -162,6 +188,12 @@ export function buildScannerToken(input: {
     createdAt: input.createdAt ?? null,
     launchAt: input.launchAt ?? null,
     mock: input.mock,
+    actor: input.actor,
+    feePolicy: input.feePolicy,
+    postCreateLock: postCreateLock({
+      actorType: input.actor.actor_type,
+      finalized: input.finalized,
+    }),
     live: false,
     founderOwned: true,
     optional: true,
@@ -326,7 +358,7 @@ export const SCANNER_OPENAPI = {
     title: "Token Manager Scanner API",
     version: "0.1.0",
     description:
-      "Read-only sketch for scanner authors (LARP check, Reagent, Crawl Scan, and later tools). Phase 1 serves mock directory rows. live is false. Missing checks are false, null, or unverified. The API does not fabricate a pass and does not require Token Manager to keep the project working.",
+      "Read-only sketch, not a live API. Phase 1 serves mock directory rows. live is false. Missing checks are false, null, or unverified. actor carries actor_type, agent_created, and no_human. An agent finalize is non-retcon. The API does not fabricate a pass and does not require Token Manager to keep the project working.",
   },
   paths: {
     "/api/scanner/tokens": {

@@ -26,8 +26,20 @@ import {
   WEEKLY_MILESTONES,
   brandAssetBrief,
   assessCredentials,
+  AGENT_TEASER,
+  AUDIT_SLOT,
+  CREDIBILITY,
+  JOURNEY_SYNC,
+  SECURITY_DISCLAIMER,
   buildScannerToken,
   buildWalletProof,
+  chooseFeePolicy,
+  creationActorMeta,
+  creationActorMetaSchema,
+  daoPlaybook,
+  feePolicyChoiceSchema,
+  postCreateLock,
+  postCreateLockSchema,
   kycBadges,
   describeEndpoints,
   locateProjectData,
@@ -332,6 +344,7 @@ describe("founder ownership and scanner flags", () => {
   });
 
   it("does not invent a pass when a check is missing", () => {
+    const actor = creationActorMeta({ actorType: "human", surface: "web" });
     const token = buildScannerToken({
       id: "sample",
       name: "Sample",
@@ -339,6 +352,9 @@ describe("founder ownership and scanner flags", () => {
       category: "tooling",
       shortDescription: "Missing checks stay empty.",
       mock: true,
+      actor,
+      feePolicy: "earmarked",
+      finalized: false,
       flags: {
         connectedX: false,
         verificationStatus: "pending",
@@ -346,6 +362,9 @@ describe("founder ownership and scanner flags", () => {
       },
     });
     assert.equal(token.live, false);
+    assert.equal(token.actor.agent_created, false);
+    assert.equal(token.actor.no_human, false);
+    assert.equal(token.postCreateLock.platformAdminCanChange, true);
     assert.equal(token.verification.connected_x, false);
     assert.equal(token.verification.connected_github, "unverified");
     assert.equal(token.verification.id_verified, "unverified");
@@ -509,6 +528,80 @@ describe("optional kyc", () => {
   });
 });
 
+describe("dual surface and agent creators", () => {
+  it("labels an agent and rejects a mixed flag", () => {
+    const agent = creationActorMeta({ actorType: "agent", surface: "mcp" });
+    assert.equal(agent.actor_type, "agent");
+    assert.equal(agent.agent_created, true);
+    assert.equal(agent.no_human, true);
+    assert.equal(agent.sessionId, "stub-shared-session");
+    assert.equal(JOURNEY_SYNC.liveSync, false);
+    assert.equal(JOURNEY_SYNC.sharedStageOrder, true);
+    const human = creationActorMeta({ actorType: "human", surface: "web" });
+    assert.equal(human.agent_created, false);
+    assert.equal(human.no_human, false);
+    const mixed = creationActorMetaSchema.safeParse({
+      actor_type: "agent",
+      sessionId: "stub-shared-session",
+      surface: "mcp",
+      agent_created: true,
+      no_human: false,
+    });
+    assert.equal(mixed.success, false);
+  });
+
+  it("keeps human_withdrawable off agent creates and freezes an agent finalize", () => {
+    const denied = feePolicyChoiceSchema.safeParse({
+      actorType: "agent",
+      policy: "human_withdrawable",
+    });
+    assert.equal(denied.success, false);
+    const humanFee = chooseFeePolicy({
+      actorType: "human",
+      policy: "human_withdrawable",
+    });
+    assert.equal(humanFee.discouraged, true);
+    assert.equal(humanFee.network, false);
+    const lock = postCreateLock({ actorType: "agent", finalized: true });
+    assert.equal(lock.mintAdmin, "immutable");
+    assert.equal(lock.lpAdmin, "immutable");
+    assert.equal(lock.feeAdmin, "immutable");
+    assert.equal(lock.retcon, "non_retcon");
+    assert.equal(lock.platformAdminCanChange, false);
+    const opened = postCreateLockSchema.safeParse({
+      ...lock,
+      mintAdmin: "mutable",
+    });
+    assert.equal(opened.success, false);
+    const playbook = daoPlaybook("agent");
+    assert.equal(playbook.votesSent, false);
+    assert.equal(playbook.humanNotified, false);
+    assert.match(playbook.teaser, /Give the agent the MCP/);
+    assert.equal(AUDIT_SLOT.completed, false);
+    assert.equal(AUDIT_SLOT.auditor, null);
+    assert.match(SECURITY_DISCLAIMER, /not a security audit/);
+    assert.equal(CREDIBILITY.listing, "wysiwyg");
+    assert.equal(CREDIBILITY.repoClonable, true);
+    assert.match(AGENT_TEASER, /notifies the human/);
+
+    const scanned = buildScannerToken({
+      id: "agent-row",
+      name: "Agent Row",
+      symbol: "AGENT",
+      category: "tooling",
+      shortDescription: "Labeled for buyers and scanners.",
+      mock: true,
+      actor: creationActorMeta({ actorType: "agent", surface: "mcp" }),
+      feePolicy: "dao_governed",
+      finalized: true,
+      flags: { claims: [] },
+    });
+    assert.equal(scanned.actor.agent_created, true);
+    assert.equal(scanned.actor.no_human, true);
+    assert.equal(scanned.postCreateLock.retcon, "non_retcon");
+  });
+});
+
 describe("redaction and readme", () => {
   it("redacts secret keys and long base58 strings", () => {
     const secret = "5".repeat(88);
@@ -560,6 +653,17 @@ describe("redaction and readme", () => {
       "does not invent an attestation",
       "magic link",
       "Privy",
+      "web or MCP",
+      "agent-created",
+      "stub-shared-session",
+      "human_withdrawable",
+      "non-retcon",
+      "Give the agent the MCP",
+      "third-party audit",
+      "WYSIWYG",
+      "not a live API",
+      "function map",
+      "clonable",
     ]) {
       assert.equal(readme.includes(phrase), true, phrase);
     }

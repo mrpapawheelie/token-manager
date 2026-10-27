@@ -13,19 +13,21 @@ Read-only JSON for scanner authors: LARP check, Reagent, Crawl Scan, and later t
 
 `VerificationFlags` is a fixed set of keys. A missing step is **false**, **null**, or **`"unverified"`**. The route does not drop the key and does not invent a pass.
 
-| Key | Meaning |
-| --- | --- |
-| `connected_x` | `true` only when the row recorded an X connection. Otherwise `false` or `"unverified"`. |
-| `connected_github` | Same rule for GitHub. A pasted URL is not an OAuth connection by itself when the flag was not set. |
-| `id_verified` | `true` only for a recorded `verified` or `anonymous_verified` status. `pending` stays `"unverified"`. |
-| `lp_locked_tier` | `none`, `partial`, or `full` when the row assessed the lock. Otherwise `"unverified"`. |
-| `auto_compound` | Boolean when recorded. Unknown is `null` or `"unverified"`. |
-| `profile_completion` | 0–100 when the checklist was scored. Otherwise `null`. |
-| `claim_fields` | The claims on the row, status copied. An empty list is empty. Status is not upgraded. |
+| Key                  | Meaning                                                                                               |
+| -------------------- | ----------------------------------------------------------------------------------------------------- |
+| `connected_x`        | `true` only when the row recorded an X connection. Otherwise `false` or `"unverified"`.               |
+| `connected_github`   | Same rule for GitHub. A pasted URL is not an OAuth connection by itself when the flag was not set.    |
+| `id_verified`        | `true` only for a recorded `verified` or `anonymous_verified` status. `pending` stays `"unverified"`. |
+| `lp_locked_tier`     | `none`, `partial`, or `full` when the row assessed the lock. Otherwise `"unverified"`.                |
+| `auto_compound`      | Boolean when recorded. Unknown is `null` or `"unverified"`.                                           |
+| `profile_completion` | 0–100 when the checklist was scored. Otherwise `null`.                                                |
+| `claim_fields`       | The claims on the row, status copied. An empty list is empty. Status is not upgraded.                 |
 
 Every Phase 1 payload has `mock: true` and `live: false`. Treat those rows as examples of the shape. Do not score a live project from them.
 
 `ScannerTokenPayload` also says `founderOwned: true`, `optional: true`, and `blocksDiy: false`.
+
+`actor` is `CreationActorMeta`. `actor_type` is `human` or `agent`. An agent create sets `agent_created` and `no_human` to true. A human create sets both to false. `feePolicy` is `earmarked`, `dao_governed`, or `human_withdrawable`. The last one is only for a human create. `postCreateLock` is non-retcon after an agent finalize: mint, LP, and fee admin are immutable, and platform admin cannot change them. The OpenAPI document is a sketch, not a live API.
 
 ## Rate limit
 

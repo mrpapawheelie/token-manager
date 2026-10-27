@@ -227,6 +227,17 @@ export function AdminDashboard({ project }: { project: DirectoryProject }) {
         </fieldset>
       </section>
 
+      {project.lock.platformAdminCanChange ? null : (
+        <section className="space-y-2 rounded-lg border border-sky-300 bg-sky-50 p-4">
+          <h2 className="text-lg font-semibold">Agent-created lock</h2>
+          <p className="text-sm text-sky-950">
+            Agent created. No human. Humans cannot change mint, LP, or fee admin via
+            platform admin. The lock is non-retcon. Phase 1 does not write that freeze on
+            chain.
+          </p>
+        </section>
+      )}
+
       <section className="space-y-2">
         <h2 className="text-lg font-semibold">Sensitive actions</h2>
         <div className="flex flex-wrap gap-2">
@@ -235,7 +246,7 @@ export function AdminDashboard({ project }: { project: DirectoryProject }) {
               key={action}
               type="button"
               disabled
-              className="cursor-not-allowed rounded-md bg-stone-200 px-3 py-2 text-sm text-stone-500"
+              className="min-h-11 cursor-not-allowed rounded-md bg-stone-200 px-3 py-2 text-sm text-stone-500"
             >
               {action}
             </button>

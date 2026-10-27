@@ -37,6 +37,14 @@ The MCP server speaks stdio. Build it, then point Cursor at the repo:
 
 `resume` moves the session. `markCurrentComplete: true` advances one stage. You can also pass a `stage` id. If you jump ahead, the result says `jumped: true`.
 
+## Web or MCP
+
+The web app and the MCP server share one stage order from `packages/shared`. `get_progress` includes `journeySync`. `sharedStageOrder` is true. `liveSync` is false in Phase 1, so the JSON session is not copied between the two processes. The stub session id is `stub-shared-session`.
+
+An agent that calls MCP to create or set up a project must send `actorType` `human` or `agent`. An agent create sets `agent_created` and `no_human` on the creation event and on the scanner JSON. The directory shows those labels. Buyers and scanners should treat an agent-created row as having no human on the create.
+
+`human_withdrawable` is only for a human-created project and is discouraged. After an agent finalize, mint, LP, and fee admin are immutable and non-retcon. Humans cannot change those via platform admin. See [Governance](/governance).
+
 ## What you should not paste
 
 Seeds, private keys, OAuth tokens, TOTP secrets, and API keys. The schemas refuse unknown secret fields. Public wallet addresses are allowed. Spendy tools still need `confirm: true`, and Phase 1 will not send the transaction.

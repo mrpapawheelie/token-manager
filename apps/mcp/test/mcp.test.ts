@@ -76,6 +76,8 @@ describe("mcp server", () => {
         "api_builder_",
         "cred_",
         "kyc_",
+        "fee_policy_",
+        "governance_",
       ]) {
         assert.equal(
           names.some((name) => name.startsWith(prefix)),
@@ -95,9 +97,17 @@ describe("mcp server", () => {
             arguments: { sessionId: "mcp-test" },
           }),
         ),
-      ) as { data: { stageIndex: number; state: { currentStage: string } } };
+      ) as {
+        data: {
+          stageIndex: number;
+          state: { currentStage: string };
+          journeySync: { sessionId: string; liveSync: boolean };
+        };
+      };
       assert.equal(progress.data.stageIndex, 0);
       assert.equal(progress.data.state.currentStage, "prep_weeks_out");
+      assert.equal(progress.data.journeySync.sessionId, "stub-shared-session");
+      assert.equal(progress.data.journeySync.liveSync, false);
 
       const secret = "5".repeat(88);
       const resumed = JSON.parse(
@@ -159,7 +169,12 @@ describe("mcp server", () => {
         textOf(
           await client.callTool({
             name: "launch_curve_submit",
-            arguments: { confirm: true, cluster: "devnet", design },
+            arguments: {
+              confirm: true,
+              cluster: "devnet",
+              design,
+              actorType: "human",
+            },
           }),
         ),
       ) as { status: string };
@@ -183,6 +198,44 @@ describe("mcp server", () => {
       assert.equal(admin.status, "not_implemented");
       assert.equal(admin.data.guardian.enforced, false);
       assert.match(admin.next, /TODO/);
+
+      const fee = JSON.parse(
+        textOf(
+          await client.callTool({
+            name: "fee_policy_choose",
+            arguments: { actorType: "agent", policy: "dao_governed" },
+          }),
+        ),
+      ) as { status: string; data: { policy: string; network: boolean } };
+      assert.equal(fee.status, "ok");
+      assert.equal(fee.data.policy, "dao_governed");
+      assert.equal(fee.data.network, false);
+
+      const deniedFee = await client.callTool({
+        name: "fee_policy_choose",
+        arguments: { actorType: "agent", policy: "human_withdrawable" },
+      });
+      assert.equal(deniedFee.isError, true);
+
+      const lock = JSON.parse(
+        textOf(
+          await client.callTool({
+            name: "governance_finalize_lock",
+            arguments: { actorType: "agent", finalized: true },
+          }),
+        ),
+      ) as {
+        data: {
+          retcon: string;
+          platformAdminCanChange: boolean;
+          mintAdmin: string;
+          network: boolean;
+        };
+      };
+      assert.equal(lock.data.retcon, "non_retcon");
+      assert.equal(lock.data.platformAdminCanChange, false);
+      assert.equal(lock.data.mintAdmin, "immutable");
+      assert.equal(lock.data.network, false);
     });
   });
 });

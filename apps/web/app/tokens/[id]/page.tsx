@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CONTRACT_ADDRESS_PLACEHOLDER, kycBadges } from "@token-manager/shared";
 
+import { ActorBadge } from "@/components/actor-badge";
 import { BadgeList } from "@/components/badges";
 import { ContractAddress } from "@/components/contract-address";
 import { IdentityScorePanel } from "@/components/identity-score";
@@ -42,6 +43,11 @@ export default async function TokenPage({ params }: PageProps) {
           {event.name} <span className="text-stone-500">{event.symbol}</span>
         </h1>
         <p className="max-w-2xl text-stone-700">{event.shortDescription}</p>
+        <ActorBadge
+          actor={event.actor}
+          feePolicy={project.feePolicy}
+          lock={project.lock}
+        />
         <p className="text-sm">
           {completion.percent}% complete. {event.category}. Verification{" "}
           {event.verification.status.replaceAll("_", " ")}.

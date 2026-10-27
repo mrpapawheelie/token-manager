@@ -145,8 +145,8 @@ export const TOOL_CATALOG = [
     guardian: false,
     writesSession: false,
     description:
-      "Review cluster, a public wallet address, and whether Codex activation is recorded. Does not connect a wallet and does not print secrets.",
-    next: "Record Codex with setup_codex. Spendy tools still require confirm: true.",
+      "Review cluster, a public wallet address, and whether Codex activation is recorded. Requires actorType human or agent. Does not connect a wallet and does not print secrets.",
+    next: "Record Codex with setup_codex. Spendy tools still require confirm: true. An agent create must stay labeled.",
   },
   {
     name: "setup_codex",
@@ -370,7 +370,7 @@ export const TOOL_CATALOG = [
     guardian: false,
     writesSession: false,
     description:
-      "Stub. Requires confirm: true. Bonding-curve creation has no platform fee. Phase 1 does not build, sign, or send it. No sniper and no bundler.",
+      "Stub. Requires confirm: true and actorType human or agent. Bonding-curve creation has no platform fee. Phase 1 does not build, sign, or send it. No sniper and no bundler. An agent actor is labeled agent_created and no_human.",
     next: "Keep the validated design and the announcement. A later phase will build the free create after confirm: true.",
   },
   {
@@ -382,7 +382,7 @@ export const TOOL_CATALOG = [
     guardian: false,
     writesSession: false,
     description:
-      "Validate a directory payload: category, description, socials, contract, locks, and verification.",
+      "Validate a directory payload: category, description, socials, contract, locks, verification, actor, fee policy, and post-create lock. actor_type agent forces agent_created and no_human. human_withdrawable is rejected for an agent.",
     next: "Store it locally with directory_log_create. That file is not the public directory yet.",
   },
   {
@@ -406,7 +406,7 @@ export const TOOL_CATALOG = [
     guardian: false,
     writesSession: false,
     description:
-      "Build a ScannerTokenPayload. Missing checks stay unverified, false, or null. mock must be set by the caller. live is false in Phase 1.",
+      "Build a ScannerTokenPayload. Missing checks stay unverified, false, or null. mock, actorType, and feePolicy are set by the caller. live is false. An agent finalize is non-retcon.",
     next: "The public fixture route is GET /api/scanner/tokens. It copies mock rows and does not query chain or OAuth.",
   },
   {
@@ -1101,6 +1101,54 @@ export const TOOL_CATALOG = [
     description:
       "Stub an HTTP 402 (x402) payable read so another agent can micropay the founder to query. Does not charge anyone.",
     next: "Publish the mock OpenAPI with the 402 response. Do not point the payee at Token Manager.",
+  },
+  {
+    name: "fee_policy_list",
+    title: "List fee policies",
+    stage: "year_one_ops",
+    implemented: true,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "List FeePolicy values. earmarked and dao_governed fit a human or an agent. human_withdrawable is only for a human-created project and is discouraged.",
+    next: "Choose one with fee_policy_choose. Phase 1 does not move funds.",
+  },
+  {
+    name: "fee_policy_choose",
+    title: "Choose a fee policy",
+    stage: "year_one_ops",
+    implemented: true,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "Record earmarked, dao_governed, or human_withdrawable. An agent cannot choose human_withdrawable. Nothing is stored on chain.",
+    next: "DAO vote setup is a pointer from governance_dao_playbook.",
+  },
+  {
+    name: "governance_dao_playbook",
+    title: "DAO vote playbook",
+    stage: "year_one_ops",
+    implemented: true,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "Pointer for DAO vote setup after an agent create. Does not open a proposal, cast a vote, or notify the human.",
+    next: "Finalize with governance_finalize_lock. An agent finalize is immutable and non-retcon.",
+  },
+  {
+    name: "governance_finalize_lock",
+    title: "Post-create lock",
+    stage: "year_one_ops",
+    implemented: true,
+    spendy: false,
+    guardian: false,
+    writesSession: false,
+    description:
+      "Return a PostCreateLock. After an agent finalize, mint, LP, and fee admin are immutable and non-retcon. Humans cannot change those via platform admin. Phase 1 does not write chain state.",
+    next: "Publish the labels on the directory and the scanner JSON. Do not retcon an agent_created project.",
   },
   {
     name: "ops_year_checklist",

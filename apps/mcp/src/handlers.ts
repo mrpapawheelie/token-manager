@@ -6,7 +6,13 @@ import {
   STAGE_LABELS,
   IDENTITY_SCORE_FORMULA,
   SITE_PAGES,
+  JOURNEY_SYNC,
   API_BUILDER_OPENAPI,
+  FEE_POLICY_NOTES,
+  chooseFeePolicy,
+  creationActorMeta,
+  daoPlaybook,
+  postCreateLock,
   adsPreview,
   amaPlan,
   describeEndpoints,
@@ -177,6 +183,7 @@ const implementedHandlers: {
           ? "Name the launch time, the dump risk, and that the dev buy is liquidity."
           : "Acknowledgements are on record for this local session.",
       storage: "local-json",
+      journeySync: JOURNEY_SYNC,
       state,
     });
   },
@@ -267,7 +274,13 @@ const implementedHandlers: {
 
   async setup_check_environment(input) {
     const args = toolInputSchemas.setup_check_environment.parse(input);
-    return ok("setup_check_environment", { checks: environmentChecks(args) });
+    return ok("setup_check_environment", {
+      checks: environmentChecks(args),
+      actor: creationActorMeta({
+        actorType: args.actorType,
+        surface: args.surface,
+      }),
+    });
   },
 
   async setup_codex(input) {
@@ -411,6 +424,7 @@ const implementedHandlers: {
       eventId: args.event.id,
       state,
       scanNotification: placeholderScanNotification(),
+      actor: args.event.actor,
     });
   },
 
@@ -426,6 +440,14 @@ const implementedHandlers: {
         shortDescription: args.shortDescription,
         contract: args.contract ?? null,
         mock: args.mock,
+        actor: creationActorMeta({
+          actorType: args.actorType,
+          surface: args.surface,
+          ...(args.sessionId ? { sessionId: args.sessionId } : {}),
+        }),
+        feePolicy:
+          args.feePolicy ?? (args.actorType === "agent" ? "dao_governed" : "earmarked"),
+        finalized: args.finalized ?? args.actorType === "agent",
         identityMode: args.identityMode ?? null,
         socials: { x: args.x ?? null, github: args.github ?? null },
         flags: {
@@ -709,6 +731,33 @@ const implementedHandlers: {
     return ok("api_builder_x402", {
       ...x402EndpointSpec(),
       openapi: API_BUILDER_OPENAPI,
+    });
+  },
+
+  async fee_policy_list() {
+    return ok("fee_policy_list", {
+      policies: FEE_POLICY_NOTES,
+      stored: false,
+      network: false,
+    });
+  },
+
+  async fee_policy_choose(input) {
+    const args = toolInputSchemas.fee_policy_choose.parse(input);
+    return ok("fee_policy_choose", chooseFeePolicy(args));
+  },
+
+  async governance_dao_playbook(input) {
+    const args = toolInputSchemas.governance_dao_playbook.parse(input);
+    return ok("governance_dao_playbook", daoPlaybook(args.actorType));
+  },
+
+  async governance_finalize_lock(input) {
+    const args = toolInputSchemas.governance_finalize_lock.parse(input);
+    return ok("governance_finalize_lock", {
+      ...postCreateLock(args),
+      stored: false,
+      network: false,
     });
   },
 

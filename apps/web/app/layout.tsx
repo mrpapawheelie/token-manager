@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="bg-stone-50 text-stone-900 antialiased">
         <MockBanner />
         <header className="border-b border-stone-200 bg-white">
-          <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-4">
+          <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center">
             <Image src="/mark.svg" alt="" width={32} height={32} />
             <div>
               <Link href="/" className="text-lg font-semibold">
